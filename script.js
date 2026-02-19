@@ -303,37 +303,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTheme1() {
         const scale = canvas.width / 1000;
-        const barHeight = 265 * scale; // Increased from 220
-        const barMargin = 18 * scale;
+        const barHeight = 180 * scale; // Reduced from 265
+        const barMargin = 12 * scale;
         const barWidth = canvas.width - (barMargin * 2);
         const barX = barMargin;
         const barY = canvas.height - barHeight - barMargin;
 
         // --- 1. Rounded Semi-transparent Bar ---
         ctx.save();
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-        roundRect(ctx, barX, barY, barWidth, barHeight, 25 * scale);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        roundRect(ctx, barX, barY, barWidth, barHeight, 18 * scale);
         ctx.fill();
 
         // --- 2. Map Snippet ---
-        const mapPad = 14 * scale;
+        const mapPad = 10 * scale;
         const mapSize = barHeight - (mapPad * 2);
         const mapX = barX + mapPad;
         const mapY = barY + mapPad;
 
         ctx.save();
-        roundRect(ctx, mapX, mapY, mapSize, mapSize, 15 * scale);
+        roundRect(ctx, mapX, mapY, mapSize, mapSize, 10 * scale);
         ctx.clip();
         if (staticMapImg.complete && staticMapImg.naturalHeight !== 0) {
             ctx.drawImage(staticMapImg, mapX, mapY, mapSize, mapSize);
 
             // Google Overlay
             ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = `bold ${17 * scale}px Arial`;
-            ctx.fillText("Google", mapX + 10 * scale, mapY + mapSize - 10 * scale);
+            ctx.font = `bold ${12 * scale}px Arial`;
+            ctx.fillText("Google", mapX + 6 * scale, mapY + mapSize - 6 * scale);
 
             // Pin
-            const pS = 38 * scale;
+            const pS = 28 * scale;
             const pX = mapX + mapSize / 2, pY = mapY + mapSize / 2;
             ctx.beginPath();
             ctx.arc(pX, pY - pS / 2, pS / 4, 0, Math.PI * 2);
@@ -345,28 +345,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ctx.restore();
 
-        // --- 3. Text content (Further Enlarged) ---
-        const textX = mapX + mapSize + 30 * scale;
-        const maxTextW = barX + barWidth - textX - 30 * scale;
+        // --- 3. Text content (Discrete) ---
+        const textX = mapX + mapSize + 22 * scale;
+        const maxTextW = barX + barWidth - textX - 22 * scale;
 
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 8 * scale;
+        ctx.shadowBlur = 5 * scale;
         ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 2.5 * scale;
-        ctx.shadowOffsetY = 2.5 * scale;
+        ctx.shadowOffsetX = 1.5 * scale;
+        ctx.shadowOffsetY = 1.5 * scale;
 
-        // Title: Kecamatan (Enlarged)
-        const titleFS = 48 * scale; // Increased from 40
+        // Title: Kecamatan (Small & Bold)
+        const titleFS = 32 * scale;
         ctx.font = `bold ${titleFS}px Arial`;
         const titleText = locationTitle.value || "Lokasi Penugasan";
-        ctx.fillText(titleText, textX, barY + 80 * scale);
+        ctx.fillText(titleText, textX, barY + 55 * scale);
 
         // Address Lines
-        const addrFS = 26 * scale; // Increased from 22
+        const addrFS = 18 * scale;
         ctx.font = `bold ${addrFS}px Arial`;
         const address = addressInput.value || "Silakan pilih lokasi...";
 
-        let curY = barY + 80 * scale + 45 * scale;
+        let curY = barY + 55 * scale + 32 * scale;
         const words = address.split(' ');
         let line = '';
         let lineIdx = 0;
@@ -381,35 +381,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ctx.fillText(line.trim(), textX, curY);
 
-        // Lat/Lng (Smaller but bold)
-        ctx.font = `bold ${addrFS * 0.85}px Arial`;
-        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY + 40 * scale);
+        // Lat/Lng (Discrete)
+        ctx.font = `bold ${addrFS * 0.9}px Arial`;
+        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY + 32 * scale);
         ctx.restore();
     }
-    curY += addrFS * 1.3;
-
-    // Lat/Long
-    ctx.fillText(`Lat ${latInput.value}° Long ${lngInput.value}°`, textX, curY);
-    curY += addrFS * 1.3;
-
-    // DateTime (Italic)
-    ctx.font = `italic ${addrFS}px Arial`;
-    ctx.fillText(`${dateInput.value} ${timeInput.value} GMT +07:00`, textX, curY);
-
-    ctx.restore();
-}
 
     function renderTheme2() {
         const scale = canvas.width / 1000;
-        const padding = 10 * scale;
+        const padding = 7 * scale;
         const fontBase = "Arial Narrow, Arial, sans-serif";
 
-        // Enlarged width benchmark (~15% of width)
-        const targetW = 150 * scale;
+        // Discrete width benchmark (~11.5% of width)
+        const targetW = 115 * scale;
 
         // --- 1. Top Right Branding (Kemensos) ---
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0 && institutionLogo.src !== "") {
-            const lW = 42 * scale;
+            const lW = 31 * scale;
             const lH = lW * (institutionLogo.height / institutionLogo.width);
             const bundleCenterX = canvas.width - padding - (lW / 2);
             const lX = bundleCenterX - (lW / 2);
@@ -419,91 +407,91 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${7 * scale}px ${fontBase}`;
+            ctx.font = `bold ${5.5 * scale}px ${fontBase}`;
             ctx.textAlign = 'center';
-            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 13 * scale);
-            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 23 * scale);
+            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 10 * scale);
+            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 18 * scale);
             ctx.restore();
         }
 
         // --- 2. Bottom Left Info Block ---
-        let curY = canvas.height - 132 * scale;
+        let curY = canvas.height - 100 * scale;
         const startX = padding;
 
         // Badge [Label ✓] Time
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value || "10:28";
-        ctx.font = `bold ${16 * scale}px ${fontBase}`;
+        ctx.font = `bold ${11.5 * scale}px ${fontBase}`;
         const labW = ctx.measureText(bLabel).width;
         const timW = ctx.measureText(` ${bTime}`).width;
-        const bPadX = 8 * scale;
+        const bPadX = 6 * scale;
         const bW = labW + timW + (bPadX * 2);
-        const bH = 29 * scale;
+        const bH = 22 * scale;
 
         ctx.save();
         ctx.fillStyle = 'white';
-        roundRect(ctx, startX, curY, bW, bH, 6 * scale);
+        roundRect(ctx, startX, curY, bW, bH, 5 * scale);
         ctx.fill();
 
         ctx.fillStyle = '#FFD100'; // VIBRANT YELLOW
-        ctx.fillText(bLabel, startX + bPadX, curY + 20 * scale);
+        ctx.fillText(bLabel, startX + bPadX, curY + 15 * scale);
         ctx.fillStyle = '#1e293b'; // DARK NAVY
-        ctx.fillText(bTime, startX + bPadX + labW, curY + 20 * scale);
+        ctx.fillText(bTime, startX + bPadX + labW, curY + 15 * scale);
         ctx.restore();
 
-        curY += 45 * scale;
+        curY += 34 * scale;
 
         // --- Vertical Line Indicator ---
         ctx.save();
-        ctx.lineWidth = 1.5 * scale;
+        ctx.lineWidth = 1.1 * scale;
         ctx.strokeStyle = '#FFD100';
         ctx.beginPath();
-        ctx.moveTo(startX, curY - 5 * scale);
-        ctx.lineTo(startX, curY + 66 * scale);
+        ctx.moveTo(startX, curY - 4 * scale);
+        ctx.lineTo(startX, curY + 50 * scale);
         ctx.stroke();
         ctx.restore();
 
         // --- Shadowed Text Block ---
-        const textX = startX + 12 * scale;
+        const textX = startX + 9 * scale;
         ctx.save();
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 5 * scale;
+        ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 1.5 * scale;
-        ctx.shadowOffsetY = 1.5 * scale;
+        ctx.shadowOffsetX = 1 * scale;
+        ctx.shadowOffsetY = 1 * scale;
         ctx.textAlign = 'left';
 
         // 2a. Day, Date
-        ctx.font = `bold ${13.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${9.5 * scale}px ${fontBase}`;
         ctx.fillText(dateInput.value, textX, curY);
-        curY += 18 * scale;
+        curY += 14 * scale;
 
         // 2b. Address (Wrapped)
-        ctx.font = `bold ${12 * scale}px ${fontBase}`;
+        ctx.font = `bold ${8.5 * scale}px ${fontBase}`;
         const addr = addressInput.value || "Silakan pilih lokasi...";
         const wrds = addr.split(' ');
         let ln = '';
         let lnCt = 0;
-        const maxW = targetW - 18 * scale;
+        const maxW = targetW - 14 * scale;
         for (let n = 0; n < wrds.length; n++) {
             let tst = ln + wrds[n] + ' ';
             if (ctx.measureText(tst).width > maxW && lnCt < 2) {
                 ctx.fillText(ln.trim(), textX, curY);
                 ln = wrds[n] + ' ';
-                curY += 14 * scale;
+                curY += 11 * scale;
                 lnCt++;
             } else { ln = tst; }
         }
         ctx.fillText(ln.trim(), textX, curY);
-        curY += 18 * scale;
+        curY += 14 * scale;
 
         // 2c. Lat/Lng (White)
         ctx.fillStyle = 'white';
         ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY);
-        curY += 21 * scale;
+        curY += 17 * scale;
 
         // 2d. Disclaimer (Split Color)
-        ctx.font = `italic 600 ${10 * scale}px ${fontBase}`;
+        ctx.font = `italic 600 ${7.5 * scale}px ${fontBase}`;
         ctx.textAlign = 'left';
 
         ctx.fillStyle = 'white';
@@ -520,9 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 3. Right Sidebar (Split Color) ---
         ctx.save();
-        ctx.translate(canvas.width - padding + 4 * scale, canvas.height / 2);
+        ctx.translate(canvas.width - padding + 3 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `bold ${10 * scale}px ${fontBase}`;
+        ctx.font = `bold ${7.5 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
 
         const sPrefix = `© ${serialNumber.value} `;
@@ -549,9 +537,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- 4. Bottom Right Branding (Time in Yellow, mark in White) ---
         ctx.save();
         ctx.textAlign = 'right';
-        ctx.shadowBlur = 5 * scale;
+        ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
-        ctx.font = `bold ${18 * scale}px ${fontBase}`;
+        ctx.font = `bold ${13 * scale}px ${fontBase}`;
 
         const bTextMark = "mark";
         const bTextTime = "Time";
@@ -559,31 +547,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Draw "mark" in White
         ctx.fillStyle = 'white';
-        ctx.fillText(bTextMark, canvas.width - padding, canvas.height - 30 * scale);
+        ctx.fillText(bTextMark, canvas.width - padding, canvas.height - 24 * scale);
 
         // Draw "Time" in Vibrant Yellow to the left of "mark"
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 30 * scale);
+        ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 24 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${10 * scale}px ${fontBase}`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 20 * scale);
+        ctx.font = `bold ${7.5 * scale}px ${fontBase}`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 15 * scale);
         ctx.restore();
     }
 
     function renderThemePrecision() {
         const scale = canvas.width / 1000;
-        const padding = 42 * scale; // Enlarged from 35
+        const padding = 28 * scale; // Reduced from 42
 
         // --- BOTTOM LEFT: MAP ---
-        const mapSize = 420 * scale; // Enlarged from 350
+        const mapSize = 280 * scale; // Reduced from 420
         const mapX = padding;
         const mapY = canvas.height - mapSize - padding;
 
         ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.lineWidth = 4 * scale;
-        ctx.shadowBlur = 10 * scale;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 3 * scale;
+        ctx.shadowBlur = 6 * scale;
         ctx.shadowColor = 'black';
         ctx.strokeRect(mapX, mapY, mapSize, mapSize);
 
@@ -598,13 +586,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- GOOGLE LOGO ---
             ctx.save();
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = `bold ${20 * scale}px Arial`;
-            ctx.fillText("Google", mapX + 12 * scale, mapY + mapSize - 12 * scale);
+            ctx.font = `bold ${14 * scale}px Arial`;
+            ctx.fillText("Google", mapX + 8 * scale, mapY + mapSize - 8 * scale);
             ctx.restore();
 
             // --- RED PIN ---
-            const pinW = 42 * scale;
-            const pinH = 60 * scale;
+            const pinW = 32 * scale;
+            const pinH = 45 * scale;
             const centerX = mapX + mapSize / 2;
             const centerY = mapY + mapSize / 2;
 
@@ -613,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Pin Shadow
             ctx.beginPath();
-            ctx.ellipse(0, 0, 10 * scale, 5 * scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 8 * scale, 4 * scale, 0, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(0,0,0,0.3)';
             ctx.fill();
 
@@ -639,13 +627,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         ctx.textAlign = 'right';
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 12 * scale;
+        ctx.shadowBlur = 8 * scale;
         ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 3 * scale;
-        ctx.shadowOffsetY = 3 * scale;
+        ctx.shadowOffsetX = 2 * scale;
+        ctx.shadowOffsetY = 2 * scale;
 
         const textX = canvas.width - padding;
-        let currentTextY = canvas.height - padding - 25 * scale;
+        let currentTextY = canvas.height - padding - 18 * scale;
 
         const lines = [];
         const now = new Date();
@@ -662,20 +650,22 @@ document.addEventListener('DOMContentLoaded', () => {
         lines.push(formattedCoords);
 
         const address = addressInput.value || "";
-        const addrParts = address.split(',').map(p => p.trim()).filter(p => p !== "");
-
-        if (addrParts.length >= 4) {
-            lines.push(addrParts[0]);
-            lines.push(addrParts[2] || "");
-            lines.push(addrParts[3] || "");
-            lines.push(addrParts[4] || "");
-        } else {
-            addrParts.forEach(p => lines.push(p));
+        const addrLines = [];
+        const words = address.split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n++) {
+            let test = line + words[n] + ' ';
+            if (ctx.measureText(test).width > 400 * scale && addrLines.length < 2) {
+                addrLines.push(line.trim());
+                line = words[n] + ' ';
+            } else { line = test; }
         }
+        addrLines.push(line.trim());
+        addrLines.reverse().forEach(l => lines.push(l));
 
-        const fontSize = 66 * scale; // Increased from 55
+        const fontSize = 48 * scale; // Reduced from 66
         ctx.font = `bold ${fontSize}px Arial`;
-        const lineSpacing = 1.35;
+        const lineSpacing = 1.3;
 
         for (let i = lines.length - 1; i >= 0; i--) {
             if (lines[i]) {
@@ -688,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderThemeCustom() {
         const scale = canvas.width / 1000;
-        const padding = 25 * scale; // Increased from 20
+        const padding = 18 * scale; // Discrete padding
 
         // Custom Variables
         const titleText = customTitle.value || locationTitle.value || "Nama Lokasi";
@@ -700,11 +690,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const fontSize = parseInt(customFontSize.value) * scale;
         const showMap = customShowMap.value === 'yes';
 
-        // 1. Calculate Content Size
+        // 1. Calculate Content Size (Slightly more compact)
         ctx.font = `bold ${fontSize}px Arial`;
         const titleMetrics = ctx.measureText(titleText);
 
-        ctx.font = `bold ${fontSize * 0.75}px Arial`; // Increased factor and weight
+        ctx.font = `bold ${fontSize * 0.7}px Arial`;
         const dateText = `${dateInput.value} ${timeInput.value}`;
         const dateMetrics = ctx.measureText(dateText);
 
@@ -712,13 +702,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const addrMetrics = ctx.measureText(addrText);
 
         const contentWidth = Math.max(titleMetrics.width, dateMetrics.width, addrMetrics.width);
-        const lineHeight = fontSize * 1.5; // Increased line height
+        const lineHeight = fontSize * 1.3;
 
         const latLngText = 'Lat: ' + latInput.value + ' Long: ' + lngInput.value;
         const latLngMetrics = ctx.measureText(latLngText);
         const finalContentWidth = Math.max(contentWidth, latLngMetrics.width);
 
-        const totalHeight = (lineHeight * 4) + (padding);
+        const totalHeight = (lineHeight * 4) + (padding / 2);
 
         // Map Size (if enabled)
         const mapSize = showMap ? (totalHeight + padding) : 0;
@@ -726,8 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalBoxHeight = Math.max(totalHeight, mapSize) + padding;
 
         // 2. Position Box
-        let boxX = (canvas.width * posX) - (totalBoxWidth / 2);
-        let boxY = (canvas.height * posY) - (totalBoxHeight / 2);
+        let boxX = (canvas.width * posX) - (totalBoxWidth / 2) || 0;
+        let boxY = (canvas.height * posY) - (totalBoxHeight / 2) || 0;
 
         // Constrain to canvas
         if (boxX < 0) boxX = 0;
@@ -738,9 +728,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Draw Background
         ctx.save();
         ctx.fillStyle = `rgba(${hexToRgb(bgColor).r}, ${hexToRgb(bgColor).g}, ${hexToRgb(bgColor).b}, ${bgAlpha})`;
-        ctx.shadowBlur = 10 * scale;
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        roundRect(ctx, boxX, boxY, totalBoxWidth, totalBoxHeight, 20 * scale);
+        ctx.shadowBlur = 6 * scale;
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        roundRect(ctx, boxX, boxY, totalBoxWidth, totalBoxHeight, 12 * scale);
         ctx.fill();
         ctx.restore();
 
@@ -752,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mapDrawY = boxY + padding;
 
             ctx.save();
-            roundRect(ctx, mapDrawX, mapDrawY, mapDrawSize, mapDrawSize, 12 * scale);
+            roundRect(ctx, mapDrawX, mapDrawY, mapDrawSize, mapDrawSize, 8 * scale);
             ctx.clip();
             if (staticMapImg.complete && staticMapImg.naturalHeight !== 0) {
                 ctx.drawImage(staticMapImg, mapDrawX, mapDrawY, mapDrawSize, mapDrawSize);
@@ -769,8 +759,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = textColor;
         ctx.textAlign = 'left';
 
-        // Strengthened Text Shadow
-        ctx.shadowBlur = 4 * scale;
+        // Subtle Text Shadow
+        ctx.shadowBlur = 3 * scale;
         ctx.shadowColor = 'rgba(0,0,0,0.8)';
 
         let currentTextY = boxY + padding + fontSize;
@@ -781,16 +771,16 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTextY += lineHeight;
 
         // Date Time
-        ctx.font = `bold ${fontSize * 0.75}px Arial`;
+        ctx.font = `bold ${fontSize * 0.7}px Arial`;
         ctx.fillText(dateText, textStartX, currentTextY);
         currentTextY += lineHeight;
 
         // Address (Wrapped)
-        ctx.font = `bold ${fontSize * 0.7}px Arial`;
+        ctx.font = `bold ${fontSize * 0.65}px Arial`;
         ctx.fillText(addrText.substring(0, 60) + (addrText.length > 60 ? "..." : ""), textStartX, currentTextY);
         currentTextY += lineHeight;
 
-        currentTextY += lineHeight * 0.9;
+        currentTextY += lineHeight * 0.85;
         ctx.fillText(latLngText, textStartX, currentTextY);
     }
 
@@ -810,182 +800,182 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-// Theme Select Logic with Locking
-themeSelect.addEventListener('mousedown', (e) => {
-    const isActivated = localStorage.getItem('watermark_activated') === 'true';
-    if (!isActivated) {
-        e.preventDefault(); // Stop dropdown from opening
-        if (activationOverlay) activationOverlay.style.display = 'flex';
-        themeSelect.blur(); // Remove focus
-        return false;
-    }
-});
-
-themeSelect.addEventListener('change', () => {
-    // Just in case change happens (e.g. keyboard nav)
-    const isActivated = localStorage.getItem('watermark_activated') === 'true';
-    if (!isActivated) {
-        themeSelect.value = 'theme1'; // Reset to default (or previous)
-        if (activationOverlay) activationOverlay.style.display = 'flex';
-        return;
-    }
-
-    theme2Inputs.style.display = themeSelect.value === 'theme2' ? 'block' : 'none';
-    customThemeInputs.style.display = themeSelect.value === 'themeCustom' ? 'block' : 'none';
-
-    if (themeSelect.value === 'theme2') {
-        generateRandomSerial(); // Ensure fresh serial when switching to Theme 2
-    }
-
-    // Refresh map if switching to/from Theme Precision
-    if (marker) {
-        const pos = marker.getLatLng();
-        updateStaticMap(pos.lat, pos.lng);
-    }
-
-    renderWatermark();
-});
-
-[customTitle, customTextColor, customBgColor, customBgOpacity, customPosY, customPosX, customFontSize, customShowMap].forEach(el => {
-    el.addEventListener('input', renderWatermark);
-});
-
-mapTypeSelect.addEventListener('change', () => {
-    if (marker) {
-        const pos = marker.getLatLng();
-        updateStaticMap(pos.lat, pos.lng);
-    }
-});
-
-mapZoomSelect.addEventListener('change', () => {
-    if (marker) {
-        const pos = marker.getLatLng();
-        updateStaticMap(pos.lat, pos.lng);
-    }
-});
-
-mapZoomSelect.addEventListener('input', () => {
-    // Just update preview text if needed, but let change handle network
-});
-
-institutionLogo.src = logoUrlInput.value;
-institutionLogo.onload = renderWatermark;
-
-downloadBtn.addEventListener('click', () => {
-    if (!currentImage) return;
-    const link = document.createElement('a');
-    link.download = `GPS_Watermark_${Date.now()}.jpg`;
-    link.href = canvas.toDataURL('image/jpeg', 0.95);
-    link.click();
-});
-
-initMap();
-initDateTime();
-
-// --- ACTIVATION SYSTEM ---
-const activationOverlay = document.getElementById('activationOverlay');
-const activationCodeInput = document.getElementById('activationCodeInput');
-const activateSubmitBtn = document.getElementById('activateSubmitBtn');
-const displayDeviceID = document.getElementById('displayDeviceID');
-const waLink = document.getElementById('waLink');
-const closeOverlayBtn = document.getElementById('closeOverlayBtn');
-
-if (closeOverlayBtn) {
-    closeOverlayBtn.addEventListener('click', () => {
-        activationOverlay.style.display = 'none';
+    // Theme Select Logic with Locking
+    themeSelect.addEventListener('mousedown', (e) => {
+        const isActivated = localStorage.getItem('watermark_activated') === 'true';
+        if (!isActivated) {
+            e.preventDefault(); // Stop dropdown from opening
+            if (activationOverlay) activationOverlay.style.display = 'flex';
+            themeSelect.blur(); // Remove focus
+            return false;
+        }
     });
-}
 
-// 1. Generate/Get persistent Device ID
-let deviceID = localStorage.getItem('watermark_device_id');
-if (!deviceID) {
-    deviceID = Math.random().toString(36).substring(2, 10).toUpperCase();
-    localStorage.setItem('watermark_device_id', deviceID);
-}
-displayDeviceID.textContent = deviceID;
+    themeSelect.addEventListener('change', () => {
+        // Just in case change happens (e.g. keyboard nav)
+        const isActivated = localStorage.getItem('watermark_activated') === 'true';
+        if (!isActivated) {
+            themeSelect.value = 'theme1'; // Reset to default (or previous)
+            if (activationOverlay) activationOverlay.style.display = 'flex';
+            return;
+        }
 
-// 2. Prepare WhatsApp Link
-const waNumber = "6285743103666";
-const waMessage = `Halo, saya ingin beli kode aktivasi GPS Watermark Pro.%0ADevice ID: ${deviceID}`;
-waLink.href = `https://wa.me/${waNumber}?text=${waMessage}`;
+        theme2Inputs.style.display = themeSelect.value === 'theme2' ? 'block' : 'none';
+        customThemeInputs.style.display = themeSelect.value === 'themeCustom' ? 'block' : 'none';
 
-// 3. Check if activated
-function checkActivation() {
-    const isActivated = localStorage.getItem('watermark_activated') === 'true';
-    const storedID = localStorage.getItem('watermark_device_id');
+        if (themeSelect.value === 'theme2') {
+            generateRandomSerial(); // Ensure fresh serial when switching to Theme 2
+        }
 
-    // Simple verification (Code is derived from Device ID + Salt)
-    if (isActivated) {
-        activationOverlay.style.display = 'none';
-    } else {
-        activationOverlay.style.display = 'flex';
-    }
-}
+        // Refresh map if switching to/from Theme Precision
+        if (marker) {
+            const pos = marker.getLatLng();
+            updateStaticMap(pos.lat, pos.lng);
+        }
 
-// 4. Submit Activation Code
-activateSubmitBtn.addEventListener('click', () => {
-    const inputCode = activationCodeInput.value.trim().toUpperCase();
-
-    // Logical verification: b64 of (DeviceID + "30k") first 8 chars
-    // Example: if ID is "ABC", key might be btoa("ABC30k").sub(0,8)
-    const expectedCode = btoa(deviceID + "30k").substring(0, 8).toUpperCase();
-
-    if (inputCode === expectedCode) {
-        localStorage.setItem('watermark_activated', 'true');
-        alert('Aplikasi BERHASIL diaktifkan!');
-        activationOverlay.style.display = 'none';
-    } else {
-        alert('Kode Aktivasi SALAH! Silakan cek kembali atau hubungi WhatsApp.');
-    }
-});
-
-// checkActivation(); // Removed initial check
-
-// Add listener for Sample Image
-sampleImageLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    loadSampleImage();
-});
-
-function loadSampleImage() {
-    // Create a gradient placeholder
-    const placeholderCanvas = document.createElement('canvas');
-    placeholderCanvas.width = 800;
-    placeholderCanvas.height = 600;
-    const pCtx = placeholderCanvas.getContext('2d');
-
-    // Gradient background
-    const grd = pCtx.createLinearGradient(0, 0, 800, 600);
-    grd.addColorStop(0, "#8ec5fc");
-    grd.addColorStop(1, "#e0c3fc");
-    pCtx.fillStyle = grd;
-    pCtx.fillRect(0, 0, 800, 600);
-
-    // Text
-    pCtx.fillStyle = "rgba(255,255,255,0.5)";
-    pCtx.font = "bold 60px Arial";
-    pCtx.textAlign = "center";
-    pCtx.textBaseline = "middle";
-    pCtx.fillText("CONTOH FOTO", 400, 300);
-
-    const img = new Image();
-    img.onload = () => {
-        // Set dummy data for preview
-        latInput.value = "-7.601301";
-        lngInput.value = "110.201094";
-        addressInput.value = "Candi Borobudur, Magelang, Jawa Tengah";
-        locationTitle.value = "Wisata Borobudur";
-        generateRandomSerial(); // Also randomize for sample
-
-        currentImage = img;
-        emptyState.style.display = 'none';
-        canvas.style.display = 'block';
-        downloadBtn.disabled = false; // Allow download of sample? Maybe okay.
         renderWatermark();
-    };
-    img.src = placeholderCanvas.toDataURL();
-}
+    });
 
-// Auto load sample on start
-loadSampleImage();
+    [customTitle, customTextColor, customBgColor, customBgOpacity, customPosY, customPosX, customFontSize, customShowMap].forEach(el => {
+        el.addEventListener('input', renderWatermark);
+    });
+
+    mapTypeSelect.addEventListener('change', () => {
+        if (marker) {
+            const pos = marker.getLatLng();
+            updateStaticMap(pos.lat, pos.lng);
+        }
+    });
+
+    mapZoomSelect.addEventListener('change', () => {
+        if (marker) {
+            const pos = marker.getLatLng();
+            updateStaticMap(pos.lat, pos.lng);
+        }
+    });
+
+    mapZoomSelect.addEventListener('input', () => {
+        // Just update preview text if needed, but let change handle network
+    });
+
+    institutionLogo.src = logoUrlInput.value;
+    institutionLogo.onload = renderWatermark;
+
+    downloadBtn.addEventListener('click', () => {
+        if (!currentImage) return;
+        const link = document.createElement('a');
+        link.download = `GPS_Watermark_${Date.now()}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    });
+
+    initMap();
+    initDateTime();
+
+    // --- ACTIVATION SYSTEM ---
+    // activationOverlay is already defined at the top
+    const activationCodeInput = document.getElementById('activationCodeInput');
+    const activateSubmitBtn = document.getElementById('activateSubmitBtn');
+    const displayDeviceID = document.getElementById('displayDeviceID');
+    const waLink = document.getElementById('waLink');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+
+    if (closeOverlayBtn) {
+        closeOverlayBtn.addEventListener('click', () => {
+            activationOverlay.style.display = 'none';
+        });
+    }
+
+    // 1. Generate/Get persistent Device ID
+    let deviceID = localStorage.getItem('watermark_device_id');
+    if (!deviceID) {
+        deviceID = Math.random().toString(36).substring(2, 10).toUpperCase();
+        localStorage.setItem('watermark_device_id', deviceID);
+    }
+    displayDeviceID.textContent = deviceID;
+
+    // 2. Prepare WhatsApp Link
+    const waNumber = "6285743103666";
+    const waMessage = `Halo, saya ingin beli kode aktivasi GPS Watermark Pro.%0ADevice ID: ${deviceID}`;
+    waLink.href = `https://wa.me/${waNumber}?text=${waMessage}`;
+
+    // 3. Check if activated
+    function checkActivation() {
+        const isActivated = localStorage.getItem('watermark_activated') === 'true';
+        const storedID = localStorage.getItem('watermark_device_id');
+
+        // Simple verification (Code is derived from Device ID + Salt)
+        if (isActivated) {
+            activationOverlay.style.display = 'none';
+        } else {
+            activationOverlay.style.display = 'flex';
+        }
+    }
+
+    // 4. Submit Activation Code
+    activateSubmitBtn.addEventListener('click', () => {
+        const inputCode = activationCodeInput.value.trim().toUpperCase();
+
+        // Logical verification: b64 of (DeviceID + "30k") first 8 chars
+        // Example: if ID is "ABC", key might be btoa("ABC30k").sub(0,8)
+        const expectedCode = btoa(deviceID + "30k").substring(0, 8).toUpperCase();
+
+        if (inputCode === expectedCode) {
+            localStorage.setItem('watermark_activated', 'true');
+            alert('Aplikasi BERHASIL diaktifkan!');
+            activationOverlay.style.display = 'none';
+        } else {
+            alert('Kode Aktivasi SALAH! Silakan cek kembali atau hubungi WhatsApp.');
+        }
+    });
+
+    // checkActivation(); // Removed initial check
+
+    // Add listener for Sample Image
+    sampleImageLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        loadSampleImage();
+    });
+
+    function loadSampleImage() {
+        // Create a gradient placeholder
+        const placeholderCanvas = document.createElement('canvas');
+        placeholderCanvas.width = 800;
+        placeholderCanvas.height = 600;
+        const pCtx = placeholderCanvas.getContext('2d');
+
+        // Gradient background
+        const grd = pCtx.createLinearGradient(0, 0, 800, 600);
+        grd.addColorStop(0, "#8ec5fc");
+        grd.addColorStop(1, "#e0c3fc");
+        pCtx.fillStyle = grd;
+        pCtx.fillRect(0, 0, 800, 600);
+
+        // Text
+        pCtx.fillStyle = "rgba(255,255,255,0.5)";
+        pCtx.font = "bold 60px Arial";
+        pCtx.textAlign = "center";
+        pCtx.textBaseline = "middle";
+        pCtx.fillText("CONTOH FOTO", 400, 300);
+
+        const img = new Image();
+        img.onload = () => {
+            // Set dummy data for preview
+            latInput.value = "-7.601301";
+            lngInput.value = "110.201094";
+            addressInput.value = "Candi Borobudur, Magelang, Jawa Tengah";
+            locationTitle.value = "Wisata Borobudur";
+            generateRandomSerial(); // Also randomize for sample
+
+            currentImage = img;
+            emptyState.style.display = 'none';
+            canvas.style.display = 'block';
+            downloadBtn.disabled = false; // Allow download of sample? Maybe okay.
+            renderWatermark();
+        };
+        img.src = placeholderCanvas.toDataURL();
+    }
+
+    // Auto load sample on start
+    loadSampleImage();
 });
