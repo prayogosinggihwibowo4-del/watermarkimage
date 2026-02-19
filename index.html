@@ -32,10 +32,10 @@
                     <h3><i data-lucide="palette"></i> Pilih Tema Watermark</h3>
                     <div class="form-group">
                         <select id="themeSelect">
-                            <option value="theme1">Tema 1: GPS Map Camera (Black Bar - Image 2)</option>
-                            <option value="theme2">Tema 2: Timemark (Kemsos Style - Image 1)</option>
-                            <option value="themePrecision">Tema 4: Precision GPS (Like Image)</option>
-                            <option value="themeCustom">Tema 3: Custom (Atur Sendiri)</option>
+                            <option value="theme1">Tema 1: GPS Map Camera (Professional)</option>
+                            <option value="theme2">Tema 2: Timemark (Kemensos Style)</option>
+                            <option value="themePrecision">Tema 3: Precision GPS (Like Image)</option>
+                            <option value="themeCustom">Tema 4: Custom (Atur Sendiri)</option>
                         </select>
                     </div>
                 </section>
@@ -66,7 +66,7 @@
                         <label>Zoom Peta (Detail)</label>
                         <input type="range" id="mapZoomSelect" min="12" max="19" value="18" style="width: 100%;">
                         <div
-                            style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                            style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-dim); margin-top: 5px;">
                             <span>Luas</span>
                             <span>Detail</span>
                         </div>
@@ -203,38 +203,6 @@
         <footer>
             <p>&copy; 2026 GPS Watermarker Pro - Modern Tool</p>
         </footer>
-    </div>
-
-    <!-- Activation Overlay -->
-    <div id="activationOverlay" class="activation-overlay">
-        <div class="activation-card">
-            <h2>Aktivasi Aplikasi</h2>
-            <p>Silakan lakukan pembayaran sekali bayar untuk menggunakan aplikasi ini selamanya.</p>
-
-            <div class="payment-info">
-                <span class="label">Transfer Ke DANA</span>
-                <span class="value">085743103666</span>
-
-                <span class="label">Nominal</span>
-                <span class="value">Rp 30.000</span>
-
-                <div class="device-id-box">
-                    <span class="label">Device ID Anda (Kirim ke WA)</span>
-                    <strong id="displayDeviceID">LOADING...</strong>
-                </div>
-            </div>
-
-            <div class="activation-actions">
-                <input type="text" id="activationCodeInput" class="input-code" placeholder="KODE AKTIVASI">
-                <button id="activateSubmitBtn" class="btn-activate">AKTIFKAN SEKARANG</button>
-                <a id="waLink" href="#" target="_blank" class="btn-wa">
-                    <i data-lucide="message-circle"></i> Chat WhatsApp (Beli Kode)
-                </a>
-                <button id="closeOverlayBtn" class="btn"
-                    style="background: transparent; border: 1px solid #334155; color: #94a3b8; margin-top: 10px;">Masuk
-                    Sebagai Tamu (Tanpa Upload)</button>
-            </div>
-        </div>
     </div>
 
     <!-- Leaflet JS -->
