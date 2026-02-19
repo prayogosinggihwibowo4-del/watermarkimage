@@ -231,9 +231,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function generateRandomSerial() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded confusing O, 0, I, 1
+        let result = 'TPC';
+        for (let i = 0; i < 11; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        serialNumber.value = result;
+    }
+
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
+            generateRandomSerial(); // Generate new serial for new photo
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
@@ -912,6 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lngInput.value = "110.201094";
             addressInput.value = "Candi Borobudur, Magelang, Jawa Tengah";
             locationTitle.value = "Wisata Borobudur";
+            generateRandomSerial(); // Also randomize for sample
 
             currentImage = img;
             emptyState.style.display = 'none';
