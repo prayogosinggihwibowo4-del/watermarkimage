@@ -231,6 +231,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    imageUpload.addEventListener('click', () => {
+        imageUpload.value = null; // Reset value so "change" fires every time
+    });
+
     function generateRandomSerial() {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluded confusing O, 0, I, 1
         let result = 'TPC';
@@ -503,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.translate(canvas.width - padding + 2.5 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `bold ${7 * scale}px ${fontBase}`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // Increased opacity for better visibility
         ctx.textAlign = 'center';
         ctx.fillText(`© ${serialNumber.value} Timemark Verified`, 0, 0);
         ctx.restore();
@@ -783,6 +787,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         theme2Inputs.style.display = themeSelect.value === 'theme2' ? 'block' : 'none';
         customThemeInputs.style.display = themeSelect.value === 'themeCustom' ? 'block' : 'none';
+
+        if (themeSelect.value === 'theme2') {
+            generateRandomSerial(); // Ensure fresh serial when switching to Theme 2
+        }
 
         // Refresh map if switching to/from Theme Precision
         if (marker) {
