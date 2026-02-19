@@ -512,14 +512,24 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(`© ${serialNumber.value} Timemark Verified`, 0, 0);
         ctx.restore();
 
-        // --- 4. Bottom Right Branding ---
+        // --- 4. Bottom Right Branding (Time in Yellow, mark in White) ---
         ctx.save();
         ctx.textAlign = 'right';
         ctx.shadowBlur = 3 * scale;
         ctx.shadowColor = 'black';
-        ctx.fillStyle = '#eab308';
         ctx.font = `bold ${13 * scale}px ${fontBase}`;
-        ctx.fillText("Timemark", canvas.width - padding, canvas.height - 22 * scale);
+
+        const bTextMark = "mark";
+        const bTextTime = "Time";
+        const markW = ctx.measureText(bTextMark).width;
+
+        // Draw "mark" in White
+        ctx.fillStyle = 'white';
+        ctx.fillText(bTextMark, canvas.width - padding, canvas.height - 22 * scale);
+
+        // Draw "Time" in Yellow to the left of "mark"
+        ctx.fillStyle = '#eab308';
+        ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 22 * scale);
 
         ctx.fillStyle = 'white';
         ctx.font = `bold ${7 * scale}px ${fontBase}`;
