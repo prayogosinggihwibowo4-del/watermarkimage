@@ -863,15 +863,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Check if activated
     function checkActivation() {
         const isActivated = localStorage.getItem('watermark_activated') === 'true';
-        const storedID = localStorage.getItem('watermark_device_id');
-
-        // Simple verification (Code is derived from Device ID + Salt)
         if (isActivated) {
             activationOverlay.style.display = 'none';
         } else {
             activationOverlay.style.display = 'flex';
         }
     }
+
+    // Call check activation on start
+    checkActivation();
 
     // 4. Submit Activation Code
     activateSubmitBtn.addEventListener('click', () => {
