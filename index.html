@@ -213,19 +213,37 @@
         lucide.createIcons();
     </script>
     <!-- Activation Overlay -->
-    <div id="activationOverlay"
-        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; color:white; text-align:center; flex-direction:column; padding:20px; backdrop-filter:blur(5px);">
-        <div
-            style="background:var(--bg-card); padding:40px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); max-width:400px; width:90%;">
-            <h2
-                style="margin-bottom:15px; background:linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-                Aktivasi Aplikasi</h2>
-            <p style="color:var(--text-muted); margin-bottom:25px;">Silakan selesaikan pembayaran Rp. 30.000 ke DANA
-                <b>085743103666</b> untuk mengaktifkan semua fitur watermark.</p>
-            <button onclick="window.location.reload()" class="btn btn-primary" style="width:100%;">Sudah Membayar? Klik
-                di Sini</button>
-            <p style="margin-top:20px; font-size:12px; color:var(--text-muted);">Aplikasi akan aktif otomatis setelah
-                pembayaran terdeteksi.</p>
+    <div id="activationOverlay" class="activation-overlay">
+        <div class="activation-card">
+            <h2>Aktivasi Aplikasi</h2>
+            <p>Fitur watermark dinonaktifkan. Silakan selesaikan pembayaran untuk mendapatkan kode aktivasi permanen.
+            </p>
+
+            <div class="payment-info">
+                <div>Transfer <b>Rp. 30.000</b> ke DANA:</div>
+                <div style="font-size: 20px; font-weight: 800; margin: 5px 0; color: var(--primary);">085743103666</div>
+                <div style="font-size: 13px;">A/N: <b>PRAYOGO</b></div>
+            </div>
+
+            <div style="margin-bottom: 5px; font-size: 12px; color: var(--text-muted);">DEVICE ID ANDA:</div>
+            <div id="displayDeviceID" class="device-id-box">LOADING...</div>
+
+            <div class="activation-input-group">
+                <input type="text" id="activationCodeInput" class="activation-input"
+                    placeholder="Masukkan Kode Aktivasi">
+                <button id="activateSubmitBtn" class="btn btn-primary">Aktifkan</button>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <a id="waLink" href="#" target="_blank" class="btn-wa">
+                    <i data-lucide="message-circle"></i> Konfirmasi via WhatsApp
+                </a>
+            </div>
+
+            <button id="closeOverlayBtn"
+                style="margin-top: 25px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; text-decoration: underline;">
+                Nanti Saja (Mode Preview)
+            </button>
         </div>
     </div>
 </body>
