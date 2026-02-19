@@ -283,234 +283,264 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTheme1() {
         const scale = canvas.width / 1000;
-        const barHeight = 150 * scale;
-        const barY = canvas.height - barHeight;
+        const barHeight = 160 * scale;
+        const barMargin = 15 * scale;
+        const barWidth = canvas.width - (barMargin * 2);
+        const barX = barMargin;
+        const barY = canvas.height - barHeight - barMargin;
 
-        // 1. Draw Semi-transparent Black Bar
+        // 1. Draw Rounded Black Bar
+        ctx.save();
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(0, barY, canvas.width, barHeight);
+        roundRect(ctx, barX, barY, barWidth, barHeight, 15 * scale);
+        ctx.fill();
 
-        // 2. Draw Map Snippet (Left side of bar)
-        const mapSize = barHeight * 0.9;
-        const mapX = 10 * scale;
-        const mapY = barY + (barHeight - mapSize) / 2;
+        // 2. Draw Map Snippet (Left side inside bar)
+        const mapPadding = 8 * scale;
+        const mapSize = barHeight - (mapPadding * 2);
+        const mapX = barX + mapPadding;
+        const mapY = barY + mapPadding;
 
         ctx.save();
-        // Map Container
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1 * scale;
-        ctx.strokeRect(mapX, mapY, mapSize, mapSize);
+        // Clip map to rounded rect inside bar
+        roundRect(ctx, mapX, mapY, mapSize, mapSize, 8 * scale);
+        ctx.clip();
 
         if (staticMapImg.complete && staticMapImg.naturalHeight !== 0) {
             ctx.drawImage(staticMapImg, mapX, mapY, mapSize, mapSize);
 
-            // Google Logo on Map
+            // Google Logo (Bottom Left of Map)
             ctx.fillStyle = 'white';
-            ctx.font = `bold ${10 * scale}px Arial`;
-            ctx.shadowBlur = 2 * scale;
+            ctx.font = `bold ${12 * scale}px Arial`;
+            ctx.shadowBlur = 4 * scale;
             ctx.shadowColor = 'black';
-            ctx.fillText("Google", mapX + 5 * scale, mapY + mapSize - 5 * scale);
+            ctx.fillText("Google", mapX + 8 * scale, mapY + mapSize - 8 * scale);
 
-            // "GPS Map Camera" attribute on map
-            ctx.font = `${8 * scale}px Arial`;
+            // "GPS Map Camera" (Bottom Right of Map)
+            ctx.font = `500 ${10 * scale}px Arial`;
             ctx.textAlign = 'right';
-            ctx.fillText("GPS Map Camera", mapX + mapSize - 5 * scale, mapY + mapSize - 5 * scale);
+            ctx.fillText("GPS Map Camera", mapX + mapSize - 8 * scale, mapY + mapSize - 8 * scale);
             ctx.textAlign = 'left';
 
-            // Red Pin
-            const pinW = 12 * scale;
-            const pinH = 18 * scale;
+            // Red Pin (Center)
+            const pinSize = 24 * scale;
+            const centerX = mapX + mapSize / 2;
+            const centerY = mapY + mapSize / 2;
+
             ctx.fillStyle = '#ea4335';
+            ctx.shadowBlur = 2 * scale;
             ctx.beginPath();
-            ctx.arc(mapX + mapSize / 2, mapY + mapSize / 2 - pinH / 2, pinW / 2, 0, Math.PI, true);
-            ctx.lineTo(mapX + mapSize / 2, mapY + mapSize / 2);
+            ctx.arc(centerX, centerY - pinSize / 2, pinSize / 4, 0, Math.PI * 2);
             ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(centerX - pinSize / 4, centerY - pinSize / 2);
+            ctx.lineTo(centerX + pinSize / 4, centerY - pinSize / 2);
+            ctx.lineTo(centerX, centerY);
+            ctx.fill();
+
+            // White dot in pin
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(mapX + mapSize / 2, mapY + mapSize / 2 - pinH / 2, pinW / 4, 0, Math.PI * 2);
+            ctx.arc(centerX, centerY - pinSize / 2, pinSize / 8, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.restore();
 
-        // 3. Draw Text (Center alignment in the remaining space)
-        const textAreaX = mapX + mapSize + 20 * scale;
-        const textMaxWidth = canvas.width - textAreaX - 60 * scale; // Leave room for flag
+        // 3. Draw Text Content
+        const textX = mapX + mapSize + 20 * scale;
+        const flagW = 45 * scale;
+        const textMaxWidth = barX + barWidth - textX - flagW - 25 * scale;
 
         ctx.fillStyle = 'white';
         ctx.shadowBlur = 0;
 
-        // Title/Kecamatan
-        const titleFontSize = 24 * scale;
-        ctx.font = `${titleFontSize}px Arial`;
+        // Line 1: Title (Kecamatan...) - Bold and Larger
+        const titleFontSize = 28 * scale;
+        ctx.font = `bold ${titleFontSize}px Arial`;
         const titleText = locationTitle.value || "Kecamatan Borobudur, Jawa Tengah, Indonesia";
-        ctx.fillText(titleText, textAreaX, barY + 35 * scale);
+        ctx.fillText(titleText, textX, barY + 45 * scale);
 
-        // Address Details
-        const addrFontSize = 14 * scale;
+        // Line 2 & 3: Address - Medium size
+        const addrFontSize = 16 * scale;
         ctx.font = `${addrFontSize}px Arial`;
         const address = addressInput.value || "Jl. Daranindra No.1, Dusun VII, Borobudur...";
 
-        let currY = barY + 35 * scale + addrFontSize + 5 * scale;
+        let currY = barY + 45 * scale + 25 * scale;
         const words = address.split(' ');
         let line = '';
-        let lineCount = 0;
+        let lineIdx = 0;
         for (let n = 0; n < words.length; n++) {
             let test = line + words[n] + ' ';
-            if (ctx.measureText(test).width > textMaxWidth && lineCount < 1) {
-                ctx.fillText(line.trim(), textAreaX, currY);
+            if (ctx.measureText(test).width > textMaxWidth && lineIdx < 1) {
+                ctx.fillText(line.trim(), textX, currY);
                 line = words[n] + ' ';
-                currY += addrFontSize * 1.2;
-                lineCount++;
+                currY += addrFontSize * 1.3;
+                lineIdx++;
             } else { line = test; }
         }
-        ctx.fillText(line.trim(), textAreaX, currY);
-        currY += addrFontSize * 1.2;
+        ctx.fillText(line.trim(), textX, currY);
+        currY += addrFontSize * 1.3;
 
-        // Coordinates
-        ctx.fillText(`Lat ${latInput.value}° Long ${lngInput.value}°`, textAreaX, currY);
-        currY += addrFontSize * 1.2;
+        // Line 4: Lat/Long
+        ctx.fillText(`Lat ${latInput.value}° Long ${lngInput.value}°`, textX, currY);
+        currY += addrFontSize * 1.3;
 
-        // Date & Time
-        ctx.fillText(`${dateInput.value} ${timeInput.value} GMT +07:00`, textAreaX, currY);
+        // Line 5: Date Time
+        ctx.font = `italic ${addrFontSize}px Arial`;
+        ctx.fillText(`${dateInput.value} ${timeInput.value} GMT +07:00`, textX, currY);
 
         // 4. Draw Flag (Right side)
-        const flagW = 36 * scale;
-        const flagH = 24 * scale;
-        const flagX = canvas.width - flagW - 20 * scale;
-        const flagY = barY + 15 * scale;
+        const flagH = 30 * scale;
+        const flagX = barX + barWidth - flagW - 20 * scale;
+        const flagY = barY + 25 * scale;
 
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(flagX, flagY, flagW, flagH / 2);
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(flagX, flagY + flagH / 2, flagW, flagH / 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1 * scale;
         ctx.strokeRect(flagX, flagY, flagW, flagH);
+
+        ctx.restore();
     }
 
     function renderTheme2() {
         const scale = canvas.width / 1000;
-        const padding = 25 * scale;
+        const padding = 30 * scale;
 
-        // --- TOP RIGHT: KEMSOS LOGO & TEXT ---
+        // --- TOP RIGHT: KEMSOS LOGO & TEXT BUNDLE ---
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0) {
-            const logoW = 100 * scale;
+            const logoW = 120 * scale;
             const logoH = logoW * (institutionLogo.height / institutionLogo.width);
-            const logoX = canvas.width - logoW - padding - 40 * scale; // Adjust for text width
+            const logoX = canvas.width - logoW - padding - 30 * scale; // Center of the bundle
             const logoY = padding;
 
             ctx.save();
+            // Logo
             ctx.drawImage(institutionLogo, logoX, logoY, logoW, logoH);
 
-            // Text below/beside logo
+            // Text Bundle (Kementrian Sosial...)
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${14 * scale}px Arial`;
+            ctx.font = `bold ${16 * scale}px Arial`;
             ctx.textAlign = 'center';
             const textX = logoX + logoW / 2;
-            ctx.fillText("KEMENTERIAN SOSIAL", textX, logoY + logoH + 20 * scale);
-            ctx.fillText("REPUBLIK INDONESIA", textX, logoY + logoH + 35 * scale);
+            ctx.fillText("KEMENTERIAN SOSIAL", textX, logoY + logoH + 25 * scale);
+            ctx.fillText("REPUBLIK INDONESIA", textX, logoY + logoH + 42 * scale);
+
+            // Thin white border around the bundle for visibility if needed, 
+            // but in Image 1 it's just on a white wall.
             ctx.restore();
         }
 
-        // --- BOTTOM LEFT: BADGE & DETAILS ---
-        let currentY = canvas.height - 280 * scale;
+        // --- BOTTOM LEFT: WHITE BOX BADGE & DETAILS ---
+        let currentY = canvas.height - 300 * scale;
         const startX = padding;
 
-        // 1. Yellow/White Badge [P2K2 ✓] 10:28
+        // 1. Precise Yellow/White Badge [P2K2 ✓] 10:28
         const badgeLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const timeStr = timeInput.value;
 
-        ctx.font = `bold ${32 * scale}px Arial`;
+        ctx.font = `bold ${36 * scale}px Arial`;
         const labelW = ctx.measureText(badgeLabel).width;
         const timeW = ctx.measureText(` ${timeStr}`).width;
-        const badgeW = labelW + timeW + 30 * scale;
-        const badgeH = 60 * scale;
+        const badgePaddingX = 20 * scale;
+        const badgeW = labelW + timeW + (badgePaddingX * 2);
+        const badgeH = 70 * scale;
 
-        ctx.fillStyle = 'white';
-        roundRect(ctx, startX, currentY, badgeW, badgeH, 10 * scale);
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        roundRect(ctx, startX, currentY, badgeW, badgeH, 12 * scale);
         ctx.fill();
         ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.lineWidth = 1 * scale;
         ctx.stroke();
 
-        ctx.fillStyle = '#eab308'; // Yellow
-        ctx.fillText(badgeLabel, startX + 15 * scale, currentY + 42 * scale);
-        ctx.fillStyle = '#1e293b'; // Dark
-        ctx.fillText(timeStr, startX + 15 * scale + labelW, currentY + 42 * scale);
+        ctx.fillStyle = '#eab308'; // Bold Yellow
+        ctx.fillText(badgeLabel, startX + badgePaddingX, currentY + 48 * scale);
+        ctx.fillStyle = '#1e293b'; // Slate Dark
+        ctx.fillText(timeStr, startX + badgePaddingX + labelW, currentY + 48 * scale);
+        ctx.restore();
 
-        currentY += 80 * scale;
+        currentY += 95 * scale;
 
-        // Details with Shadow
+        // Details with Soft Shadows
         ctx.save();
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 4 * scale;
-        ctx.shadowColor = 'black';
+        ctx.shadowBlur = 6 * scale;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowOffsetX = 2 * scale;
+        ctx.shadowOffsetY = 2 * scale;
         ctx.textAlign = 'left';
 
-        // 2. Date
-        ctx.font = `bold ${22 * scale}px Arial`;
+        // 2. Day, Date
+        ctx.font = `bold ${24 * scale}px Arial`;
         ctx.fillText(dateInput.value, startX, currentY);
-        currentY += 35 * scale;
+        currentY += 40 * scale;
 
-        // 3. Address
-        ctx.font = `${18 * scale}px Arial`;
+        // 3. Address (Wrapped)
+        ctx.font = `500 ${20 * scale}px Arial`;
         const address = addressInput.value || "Jl. Daranindra No.1, Dusun VII, Kompleks Kantor...";
         const words = address.split(' ');
         let line = '';
         let lineCount = 0;
-        const maxW = 450 * scale;
+        const maxW = 550 * scale;
         for (let n = 0; n < words.length; n++) {
             let test = line + words[n] + ' ';
             if (ctx.measureText(test).width > maxW && lineCount < 2) {
                 ctx.fillText(line.trim(), startX, currentY);
                 line = words[n] + ' ';
-                currentY += 25 * scale;
+                currentY += 28 * scale;
                 lineCount++;
             } else { line = test; }
         }
         ctx.fillText(line.trim(), startX, currentY);
-        currentY += 35 * scale;
+        currentY += 40 * scale;
 
         // 4. Coordinates
         ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, startX, currentY);
-        currentY += 35 * scale;
+        currentY += 45 * scale;
 
-        // 5. Disclaimer
-        ctx.font = `italic ${14 * scale}px Arial`;
+        // 5. Disclaimer with Icon
+        ctx.font = `italic ${16 * scale}px Arial`;
         ctx.fillText("✓ Timemark menjamin keaslian waktu", startX, currentY);
         ctx.restore();
 
-        // --- SIDE SERIAL (Vertical) ---
+        // --- SIDE SERIAL TEXT (Vertical Right) ---
         ctx.save();
-        ctx.translate(canvas.width - 25 * scale, canvas.height / 2);
+        ctx.translate(canvas.width - padding + 5 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `${14 * scale}px Arial`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.shadowBlur = 2 * scale;
+        ctx.font = `${16 * scale}px Arial`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.shadowBlur = 3 * scale;
         ctx.shadowColor = 'black';
         ctx.textAlign = 'center';
         ctx.fillText(`© ${serialNumber.value} Timemark Verified`, 0, 0);
         ctx.restore();
 
-        // --- BOTTOM RIGHT: BRANDING ---
+        // --- BOTTOM RIGHT: BRANDING & FLAG ---
         // Flag
-        const fW = 40 * scale, fH = 26 * scale;
+        const fW = 50 * scale, fH = 32 * scale;
         const fX = canvas.width - fW - padding;
-        const fY = canvas.height - 180 * scale;
+        const fY = canvas.height - 200 * scale;
         ctx.fillStyle = '#ff0000'; ctx.fillRect(fX, fY, fW, fH / 2);
         ctx.fillStyle = '#ffffff'; ctx.fillRect(fX, fY + fH / 2, fW, fH / 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.strokeRect(fX, fY, fW, fH);
 
-        // Text
+        // Timemark Yellow Branding
         ctx.save();
         ctx.textAlign = 'right';
-        ctx.shadowBlur = 4 * scale;
+        ctx.shadowBlur = 6 * scale;
         ctx.shadowColor = 'black';
 
-        ctx.fillStyle = '#eab308';
-        ctx.font = `bold ${32 * scale}px Arial`;
-        ctx.fillText("Timemark", canvas.width - padding, canvas.height - 50 * scale);
+        ctx.fillStyle = '#eab308'; // Brand Yellow
+        ctx.font = `bold ${38 * scale}px Arial`;
+        ctx.fillText("Timemark", canvas.width - padding, canvas.height - 60 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `${14 * scale}px Arial`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 30 * scale);
+        ctx.font = `${16 * scale}px Arial`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 35 * scale);
         ctx.restore();
     }
 
