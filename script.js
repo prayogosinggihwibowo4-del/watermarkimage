@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTheme2() {
         const scale = canvas.width / 1000;
         const padding = 20 * scale;
+        const fontBase = "Arial Narrow, Arial, sans-serif";
 
         // --- 1. Top Right Branding (Kemensos) ---
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0 && institutionLogo.src !== "") {
@@ -392,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${13 * scale}px Arial`;
+            ctx.font = `bold ${13 * scale}px ${fontBase}`;
             ctx.textAlign = 'center';
             ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 18 * scale);
             ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 32 * scale);
@@ -400,13 +401,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- 2. Bottom Left Info Block ---
-        let curY = canvas.height - 200 * scale;
+        let curY = canvas.height - 210 * scale;
         const startX = padding;
 
         // Badge [Label ✓] Time
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value || "10:28";
-        ctx.font = `bold ${28 * scale}px Arial`;
+        ctx.font = `bold ${28 * scale}px ${fontBase}`;
         const labW = ctx.measureText(bLabel).width;
         const timW = ctx.measureText(` ${bTime}`).width;
         const bPadX = 15 * scale;
@@ -420,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.fillStyle = '#eab308'; // YELLOW
         ctx.fillText(bLabel, startX + bPadX, curY + 40 * scale);
-        ctx.fillStyle = '#1e293b'; // DARK NAVY/BLACK
+        ctx.fillStyle = '#1e293b'; // DARK NAVY
         ctx.fillText(bTime, startX + bPadX + labW, curY + 40 * scale);
         ctx.restore();
 
@@ -432,12 +433,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.strokeStyle = '#eab308'; // Yellow line
         ctx.beginPath();
         ctx.moveTo(startX, curY - 5 * scale);
-        ctx.lineTo(startX, curY + 115 * scale); // Extends downward
+        ctx.lineTo(startX, curY + 115 * scale);
         ctx.stroke();
         ctx.restore();
 
         // --- Shadowed Text Block ---
-        const textX = startX + 15 * scale; // Offset from line
+        const textX = startX + 15 * scale;
         ctx.save();
         ctx.fillStyle = 'white';
         ctx.shadowBlur = 8 * scale;
@@ -447,12 +448,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = 'left';
 
         // 2a. Day, Date
-        ctx.font = `bold ${22 * scale}px Arial`;
+        ctx.font = `bold ${22 * scale}px ${fontBase}`;
         ctx.fillText(dateInput.value, textX, curY);
         curY += 34 * scale;
 
         // 2b. Address (Wrapped)
-        ctx.font = `bold ${18 * scale}px Arial`;
+        ctx.font = `bold ${18 * scale}px ${fontBase}`;
         const addr = addressInput.value || "Silakan pilih lokasi...";
         const wrds = addr.split(' ');
         let ln = '';
@@ -477,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2d. Disclaimer
         ctx.fillStyle = 'white';
-        ctx.font = `italic 600 ${14 * scale}px Arial`;
+        ctx.font = `italic 600 ${14 * scale}px ${fontBase}`;
         ctx.fillText("✓ Timemark menjamin keaslian waktu", textX, curY);
         ctx.restore();
 
@@ -485,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         ctx.translate(canvas.width - padding + 5 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `${14 * scale}px Arial`;
+        ctx.font = `${14 * scale}px ${fontBase}`;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.textAlign = 'center';
         ctx.fillText(`© ${serialNumber.value} Timemark Verified`, 0, 0);
@@ -497,11 +498,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 6 * scale;
         ctx.shadowColor = 'black';
         ctx.fillStyle = '#eab308';
-        ctx.font = `bold ${32 * scale}px Arial`;
+        ctx.font = `bold ${32 * scale}px ${fontBase}`;
         ctx.fillText("Timemark", canvas.width - padding, canvas.height - 55 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${15 * scale}px Arial`;
+        ctx.font = `bold ${15 * scale}px ${fontBase}`;
         ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 35 * scale);
         ctx.restore();
     }
