@@ -272,12 +272,17 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = currentImage.height;
         ctx.drawImage(currentImage, 0, 0);
 
-        if (themeSelect.value === 'theme1') {
+        const theme = themeSelect.value;
+        if (theme === 'theme1') {
             renderTheme1();
-        } else if (themeSelect.value === 'themePrecision') {
+        } else if (theme === 'theme2') {
+            renderTheme2();
+        } else if (theme === 'themePrecision') {
             renderThemePrecision();
-        } else {
+        } else if (theme === 'themeCustom') {
             renderThemeCustom();
+        } else {
+            renderTheme1(); // Default
         }
     }
 
@@ -405,102 +410,108 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTheme2() {
         const scale = canvas.width / 1000;
-        const padding = 35 * scale;
+        const padding = 30 * scale;
 
         // --- 1. Top Right Branding (Kemensos) ---
+        // Bundle is aligned to the right
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0) {
-            const lW = 125 * scale;
+            const lW = 130 * scale; // Slightly larger for clarity
             const lH = lW * (institutionLogo.height / institutionLogo.width);
-            const lX = canvas.width - lW - padding - 40 * scale;
+            // Aligned bundle center to a point from the right
+            const bundleCenterX = canvas.width - padding - (lW / 2) - 10 * scale;
+            const lX = bundleCenterX - (lW / 2);
             const lY = padding;
 
             ctx.save();
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${18 * scale}px Arial`;
+            ctx.font = `bold ${19 * scale}px Arial`;
             ctx.textAlign = 'center';
-            ctx.fillText("KEMENTERIAN SOSIAL", lX + lW / 2, lY + lH + 28 * scale);
-            ctx.fillText("REPUBLIK INDONESIA", lX + lW / 2, lY + lH + 46 * scale);
+            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 30 * scale);
+            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 50 * scale);
             ctx.restore();
         }
 
         // --- 2. Bottom Left Info Block ---
-        let curY = canvas.height - 310 * scale;
+        let curY = canvas.height - 320 * scale;
         const startX = padding;
 
-        // Badge [Label ✓] Time
+        // Badge [Label ✓] Time (e.g. [P2K2 ✓] 10:28)
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value;
-        ctx.font = `bold ${38 * scale}px Arial`;
+        ctx.font = `bold ${40 * scale}px Arial`;
         const labW = ctx.measureText(bLabel).width;
         const timW = ctx.measureText(` ${bTime}`).width;
-        const bPad = 22 * scale;
-        const bW = labW + timW + (bPad * 2);
-        const bH = 75 * scale;
+        const bPadX = 25 * scale;
+        const bW = labW + timW + (bPadX * 2);
+        const bH = 80 * scale;
 
         ctx.save();
-        ctx.fillStyle = 'white';
-        roundRect(ctx, startX, curY, bW, bH, 12 * scale);
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // Pure white opaque badge
+        roundRect(ctx, startX, curY, bW, bH, 15 * scale);
         ctx.fill();
         ctx.strokeStyle = 'rgba(0,0,0,0.1)';
         ctx.stroke();
-        ctx.fillStyle = '#eab308'; // Brand Yellow
-        ctx.fillText(bLabel, startX + bPad, curY + 52 * scale);
-        ctx.fillStyle = '#1e293b'; // Slate
-        ctx.fillText(bTime, startX + bPad + labW, curY + 52 * scale);
+
+        ctx.fillStyle = '#eab308'; // Bold Yellow
+        ctx.fillText(bLabel, startX + bPadX, curY + 55 * scale);
+        ctx.fillStyle = '#1e293b'; // Slate Dark
+        ctx.fillText(bTime, startX + bPadX + labW, curY + 55 * scale);
         ctx.restore();
 
-        curY += 105 * scale;
+        curY += 115 * scale;
 
-        // Shadowed Text Info
+        // Shadowed Text Detail Block
         ctx.save();
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 8 * scale;
-        ctx.shadowColor = 'rgba(0,0,0,1)';
-        ctx.shadowOffsetX = 3 * scale;
-        ctx.shadowOffsetY = 3 * scale;
+        // Stronger shadows for clarity as in Image 1
+        ctx.shadowBlur = 10 * scale;
+        ctx.shadowColor = 'rgba(0,0,0,0.9)';
+        ctx.shadowOffsetX = 4 * scale;
+        ctx.shadowOffsetY = 4 * scale;
         ctx.textAlign = 'left';
 
-        // Date (Bold)
-        ctx.font = `bold ${26 * scale}px Arial`;
+        // 2a. Day, Date
+        ctx.font = `bold ${28 * scale}px Arial`;
         ctx.fillText(dateInput.value, startX, curY);
-        curY += 45 * scale;
+        curY += 50 * scale;
 
-        // Address (Wrapped)
-        ctx.font = `500 ${22 * scale}px Arial`;
+        // 2b. Address (Wrapped)
+        ctx.font = `600 ${23 * scale}px Arial`;
         const addr = addressInput.value || "Jl. Daranindra No.1, Dusun VII, Complex Kantor...";
         const wrds = addr.split(' ');
         let ln = '';
         let lnCt = 0;
-        const maxW = 580 * scale;
+        const maxW = 600 * scale;
         for (let n = 0; n < wrds.length; n++) {
             let tst = ln + wrds[n] + ' ';
             if (ctx.measureText(tst).width > maxW && lnCt < 2) {
                 ctx.fillText(ln.trim(), startX, curY);
                 ln = wrds[n] + ' ';
-                curY += 32 * scale;
+                curY += 35 * scale;
                 lnCt++;
             } else { ln = tst; }
         }
         ctx.fillText(ln.trim(), startX, curY);
-        curY += 45 * scale;
-
-        // Lat/Lng
-        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, startX, curY);
         curY += 50 * scale;
 
-        // Disclaimer (Italic)
-        ctx.font = `italic ${18 * scale}px Arial`;
+        // 2c. Lat/Lng
+        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, startX, curY);
+        curY += 55 * scale;
+
+        // 2d. Disclaimer
+        ctx.font = `italic 600 ${20 * scale}px Arial`;
         ctx.fillText("✓ Timemark menjamin keaslian waktu", startX, curY);
         ctx.restore();
 
-        // --- 3. Right Vertical Text ---
+        // --- 3. Right Vertical Sidebar Serial ---
         ctx.save();
-        ctx.translate(canvas.width - padding + 10 * scale, canvas.height / 2);
+        // Positioned along the right edge
+        ctx.translate(canvas.width - padding + 15 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `${18 * scale}px Arial`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
         ctx.textAlign = 'center';
@@ -508,26 +519,29 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
 
         // --- 4. Bottom Right Branding ---
-        // Flag
-        const fW = 55 * scale, fH = 36 * scale;
+        // Indonesian Flag
+        const fW = 60 * scale, fH = 40 * scale;
         const fX = canvas.width - fW - padding;
-        const fY = canvas.height - 210 * scale;
+        const fY = canvas.height - 230 * scale;
+
         ctx.fillStyle = '#ff0000'; ctx.fillRect(fX, fY, fW, fH / 2);
         ctx.fillStyle = '#ffffff'; ctx.fillRect(fX, fY + fH / 2, fW, fH / 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1 * scale;
         ctx.strokeRect(fX, fY, fW, fH);
 
-        // Timemark Title & Subtitle
+        // Timemark Title & Tagline
         ctx.save();
         ctx.textAlign = 'right';
-        ctx.shadowBlur = 8 * scale;
+        ctx.shadowBlur = 10 * scale;
         ctx.shadowColor = 'black';
-        ctx.fillStyle = '#eab308';
-        ctx.font = `bold ${42 * scale}px Arial`;
-        ctx.fillText("Timemark", canvas.width - padding, canvas.height - 65 * scale);
+        ctx.fillStyle = '#eab308'; // Brand Yellow
+        ctx.font = `bold ${45 * scale}px Arial`;
+        ctx.fillText("Timemark", canvas.width - padding, canvas.height - 70 * scale);
+
         ctx.fillStyle = 'white';
-        ctx.font = `${18 * scale}px Arial`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 40 * scale);
+        ctx.font = `600 ${20 * scale}px Arial`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 45 * scale);
         ctx.restore();
     }
 
