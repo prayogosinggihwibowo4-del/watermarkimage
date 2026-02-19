@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Map Camera - Watermarket Pro</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i data-lucide="camera"></i>
+                <h1>GPS Map <span>Camera</span></h1>
+            </div>
+            <p class="subtitle">Berikan watermark lokasi profesional pada foto Anda</p>
+        </header>
+
+        <main>
+            <div class="column-left">
+                <!-- Theme Selection -->
+                <section class="card theme-section">
+                    <h3><i data-lucide="palette"></i> Pilih Tema Watermark</h3>
+                    <div class="form-group">
+                        <select id="themeSelect">
+                            <option value="theme1">Tema 1: GPS Map Camera (Black Bar - Image 2)</option>
+                            <option value="theme2">Tema 2: Timemark (Kemsos Style - Image 1)</option>
+                            <option value="themePrecision">Tema 4: Precision GPS (Like Image)</option>
+                            <option value="themeCustom">Tema 3: Custom (Atur Sendiri)</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Upload Section -->
+                <section class="card upload-section">
+                    <label for="imageUpload" class="upload-area" id="dropZone">
+                        <i data-lucide="image-plus"></i>
+                        <span>Pilih atau seret foto ke sini</span>
+                        <input type="file" id="imageUpload" accept="image/*" hidden>
+                    </label>
+                </section>
+
+                <!-- Map & Input Section -->
+                <section class="card controls-section">
+                    <h3><i data-lucide="map-pin"></i> Pengaturan Lokasi</h3>
+                    <div id="map"></div>
+
+                    <div class="form-group">
+                        <label>Jenis Peta</label>
+                        <select id="mapTypeSelect">
+                            <option value="map">Standar (Roadmap)</option>
+                            <option value="sat,skl">Satelit</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zoom Peta (Detail)</label>
+                        <input type="range" id="mapZoomSelect" min="12" max="19" value="18" style="width: 100%;">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                            <span>Luas</span>
+                            <span>Detail</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nama Lokasi (Judul)</label>
+                        <input type="text" id="locationTitle" placeholder="Contoh: Kecamatan Borobudur...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alamat Lengkap</label>
+                        <textarea id="addressInput" rows="3" placeholder="Alamat akan muncul otomatis..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="text" id="latInput" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="text" id="lngInput" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hari & Tanggal</label>
+                            <input type="text" id="dateInput">
+                        </div>
+                        <div class="form-group">
+                            <label>Jam</label>
+                            <input type="text" id="timeInput">
+                        </div>
+                    </div>
+
+                    <!-- Theme 2 Specific Inputs -->
+                    <div id="theme2Inputs"
+                        style="display: none; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Logo Institusi (Link Direct .png)</label>
+                            <input type="text" id="logoUrl"
+                                value="https://lh3.googleusercontent.com/d/1r7KZsDz8kUEQ_5KNW8rBIBkSCpJ6VsB3"
+                                placeholder="Masukkan link gambar...">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Badge Text (Theme 2)</label>
+                                <input type="text" id="badgeText" placeholder="Otomatis dari 'Nama Lokasi'" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Serial Number (Theme 2)</label>
+                                <input type="text" id="serialNumber" value="TPC9KKXEHWK61W">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Theme Inputs -->
+                    <div id="customThemeInputs"
+                        style="display: none; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Judul Watermark</label>
+                            <input type="text" id="customTitle" placeholder="Contoh: Dokumentasi Kegiatan...">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warna Teks</label>
+                                <input type="color" id="customTextColor" value="#ffffff"
+                                    style="height: 40px; padding: 2px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Warna Background</label>
+                                <input type="color" id="customBgColor" value="#000000"
+                                    style="height: 40px; padding: 2px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Transparansi Background</label>
+                            <input type="range" id="customBgOpacity" min="0" max="1" step="0.1" value="0.5"
+                                style="width: 100%;">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Posisi Vertikal (Y)</label>
+                                <input type="range" id="customPosY" min="0" max="100" value="90" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label>Posisi Horizontal (X)</label>
+                                <input type="range" id="customPosX" min="0" max="100" value="50" style="width: 100%;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ukuran Font</label>
+                            <input type="range" id="customFontSize" min="10" max="100" value="20" style="width: 100%;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tampilkan Peta</label>
+                            <select id="customShowMap">
+                                <option value="yes">Ya</option>
+                                <option value="no">Tidak</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="column-right">
+                <!-- Preview Section -->
+                <section class="card preview-section">
+                    <div class="preview-header">
+                        <h3><i data-lucide="eye"></i> Pratinjau Hasil</h3>
+                        <button id="downloadBtn" class="btn btn-primary" disabled>
+                            <i data-lucide="download"></i> Download Hasil
+                        </button>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="mainCanvas"></canvas>
+                        <div id="emptyState" class="empty-state">
+                            <i data-lucide="clapperboard"></i>
+                            <p>Unggah foto untuk melihat pratinjau</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 GPS Watermarker Pro - Modern Tool</p>
+        </footer>
+    </div>
+
+    <!-- Activation Overlay -->
+    <div id="activationOverlay" class="activation-overlay">
+        <div class="activation-card">
+            <h2>Aktivasi Aplikasi</h2>
+            <p>Silakan lakukan pembayaran sekali bayar untuk menggunakan aplikasi ini selamanya.</p>
+
+            <div class="payment-info">
+                <span class="label">Transfer Ke DANA</span>
+                <span class="value">085743103666</span>
+
+                <span class="label">Nominal</span>
+                <span class="value">Rp 30.000</span>
+
+                <div class="device-id-box">
+                    <span class="label">Device ID Anda (Kirim ke WA)</span>
+                    <strong id="displayDeviceID">LOADING...</strong>
+                </div>
+            </div>
+
+            <div class="activation-actions">
+                <input type="text" id="activationCodeInput" class="input-code" placeholder="KODE AKTIVASI">
+                <button id="activateSubmitBtn" class="btn-activate">AKTIFKAN SEKARANG</button>
+                <a id="waLink" href="#" target="_blank" class="btn-wa">
+                    <i data-lucide="message-circle"></i> Chat WhatsApp (Beli Kode)
+                </a>
+                <button id="closeOverlayBtn" class="btn"
+                    style="background: transparent; border: 1px solid #334155; color: #94a3b8; margin-top: 10px;">Masuk
+                    Sebagai Tamu (Tanpa Upload)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
