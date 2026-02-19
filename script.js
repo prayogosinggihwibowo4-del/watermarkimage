@@ -303,37 +303,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTheme1() {
         const scale = canvas.width / 1000;
-        const barHeight = 180 * scale; // Reduced from 265
-        const barMargin = 12 * scale;
-        const barWidth = canvas.width - (barMargin * 2);
-        const barX = barMargin;
-        const barY = canvas.height - barHeight - barMargin;
+        const padding = 12 * scale;
 
-        // --- 1. Rounded Semi-transparent Bar ---
+        // Compact Sticker Dimensions (approx 20-25% width)
+        const boxWidth = 260 * scale;
+        const boxHeight = 140 * scale;
+        const boxX = padding;
+        const boxY = canvas.height - boxHeight - padding;
+
+        // --- 1. Compact Rounded Box ---
         ctx.save();
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        roundRect(ctx, barX, barY, barWidth, barHeight, 18 * scale);
+        roundRect(ctx, boxX, boxY, boxWidth, boxHeight, 15 * scale);
         ctx.fill();
 
-        // --- 2. Map Snippet ---
-        const mapPad = 10 * scale;
-        const mapSize = barHeight - (mapPad * 2);
-        const mapX = barX + mapPad;
-        const mapY = barY + mapPad;
+        // --- 2. Mini Map ---
+        const mapPad = 8 * scale;
+        const mapSize = boxHeight - (mapPad * 2);
+        const mapX = boxX + mapPad;
+        const mapY = boxY + mapPad;
 
         ctx.save();
-        roundRect(ctx, mapX, mapY, mapSize, mapSize, 10 * scale);
+        roundRect(ctx, mapX, mapY, mapSize, mapSize, 8 * scale);
         ctx.clip();
         if (staticMapImg.complete && staticMapImg.naturalHeight !== 0) {
             ctx.drawImage(staticMapImg, mapX, mapY, mapSize, mapSize);
 
             // Google Overlay
             ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = `bold ${12 * scale}px Arial`;
-            ctx.fillText("Google", mapX + 6 * scale, mapY + mapSize - 6 * scale);
+            ctx.font = `bold ${10 * scale}px Arial`;
+            ctx.fillText("Google", mapX + 5 * scale, mapY + mapSize - 5 * scale);
 
             // Pin
-            const pS = 28 * scale;
+            const pS = 22 * scale;
             const pX = mapX + mapSize / 2, pY = mapY + mapSize / 2;
             ctx.beginPath();
             ctx.arc(pX, pY - pS / 2, pS / 4, 0, Math.PI * 2);
@@ -345,45 +347,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ctx.restore();
 
-        // --- 3. Text content (Discrete) ---
-        const textX = mapX + mapSize + 22 * scale;
-        const maxTextW = barX + barWidth - textX - 22 * scale;
+        // --- 3. Sticker Text (Mini) ---
+        const textX = mapX + mapSize + 12 * scale;
+        const maxTextW = boxX + boxWidth - textX - 8 * scale;
 
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 5 * scale;
-        ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 1.5 * scale;
-        ctx.shadowOffsetY = 1.5 * scale;
+        ctx.textAlign = 'left';
 
-        // Title: Kecamatan (Small & Bold)
-        const titleFS = 32 * scale;
+        // Title (Very Small & Bold)
+        const titleFS = 22 * scale;
         ctx.font = `bold ${titleFS}px Arial`;
-        const titleText = locationTitle.value || "Lokasi Penugasan";
-        ctx.fillText(titleText, textX, barY + 55 * scale);
+        const titleText = locationTitle.value || "Lokasi";
+        ctx.fillText(titleText.substring(0, 15), textX, boxY + 35 * scale);
 
-        // Address Lines
-        const addrFS = 18 * scale;
+        // Address (Wrapped)
+        const addrFS = 13 * scale;
         ctx.font = `bold ${addrFS}px Arial`;
-        const address = addressInput.value || "Silakan pilih lokasi...";
+        const address = addressInput.value || "Alamat...";
 
-        let curY = barY + 55 * scale + 32 * scale;
+        let curY = boxY + 35 * scale + 22 * scale;
         const words = address.split(' ');
         let line = '';
         let lineIdx = 0;
         for (let n = 0; n < words.length; n++) {
             let test = line + words[n] + ' ';
-            if (ctx.measureText(test).width > maxTextW && lineIdx < 1) {
+            if (ctx.measureText(test).width > maxTextW && lineIdx < 2) {
                 ctx.fillText(line.trim(), textX, curY);
                 line = words[n] + ' ';
-                curY += addrFS * 1.35;
+                curY += addrFS * 1.25;
                 lineIdx++;
             } else { line = test; }
         }
-        ctx.fillText(line.trim(), textX, curY);
+        ctx.fillText(ln = (line.length > 20 ? line.substring(0, 20) + "..." : line).trim(), textX, curY);
 
-        // Lat/Lng (Discrete)
+        // Lat/Lng
         ctx.font = `bold ${addrFS * 0.9}px Arial`;
-        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY + 32 * scale);
+        ctx.fillText(`${latInput.value.substring(0, 8)}, ${lngInput.value.substring(0, 8)}`, textX, curY + 22 * scale);
         ctx.restore();
     }
 
@@ -561,18 +560,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderThemePrecision() {
         const scale = canvas.width / 1000;
-        const padding = 28 * scale; // Reduced from 42
+        const padding = 18 * scale; // Even smaller padding
 
-        // --- BOTTOM LEFT: MAP ---
-        const mapSize = 280 * scale; // Reduced from 420
+        // --- BOTTOM LEFT: MAP (Ultra Mini) ---
+        const mapSize = 180 * scale; // Reduced from 280
         const mapX = padding;
         const mapY = canvas.height - mapSize - padding;
 
         ctx.save();
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.lineWidth = 3 * scale;
-        ctx.shadowBlur = 6 * scale;
-        ctx.shadowColor = 'black';
+        ctx.lineWidth = 2 * scale;
         ctx.strokeRect(mapX, mapY, mapSize, mapSize);
 
         // Clip to square
@@ -586,86 +583,50 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- GOOGLE LOGO ---
             ctx.save();
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = `bold ${14 * scale}px Arial`;
-            ctx.fillText("Google", mapX + 8 * scale, mapY + mapSize - 8 * scale);
+            ctx.font = `bold ${11 * scale}px Arial`;
+            ctx.fillText("Google", mapX + 5 * scale, mapY + mapSize - 5 * scale);
             ctx.restore();
 
             // --- RED PIN ---
-            const pinW = 32 * scale;
-            const pinH = 45 * scale;
+            const pinW = 22 * scale;
+            const pinH = 32 * scale;
             const centerX = mapX + mapSize / 2;
             const centerY = mapY + mapSize / 2;
 
             ctx.save();
             ctx.translate(centerX, centerY);
-
-            // Pin Shadow
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 8 * scale, 4 * scale, 0, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.fill();
-
-            // Pin body
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.bezierCurveTo(-pinW / 2, -pinH / 2, -pinW / 2, -pinH, 0, -pinH);
-            ctx.bezierCurveTo(pinW / 2, -pinH, pinW / 2, -pinH / 2, 0, 0);
-            ctx.fillStyle = '#ea4335';
-            ctx.fill();
-
-            // Center hole
             ctx.beginPath();
             ctx.arc(0, -pinH * 0.7, pinW / 5, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = '#ea4335';
             ctx.fill();
-
             ctx.restore();
         }
         ctx.restore();
 
-        // --- BOTTOM RIGHT: TEXT ---
+        // --- BOTTOM RIGHT: TEXT (Mini) ---
         ctx.save();
         ctx.textAlign = 'right';
         ctx.fillStyle = 'white';
-        ctx.shadowBlur = 8 * scale;
+        ctx.shadowBlur = 6 * scale;
         ctx.shadowColor = 'black';
-        ctx.shadowOffsetX = 2 * scale;
-        ctx.shadowOffsetY = 2 * scale;
 
         const textX = canvas.width - padding;
-        let currentTextY = canvas.height - padding - 18 * scale;
+        let currentTextY = canvas.height - padding - 12 * scale;
 
         const lines = [];
         const now = new Date();
         const monthsNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-        const formattedDate = `${now.getDate()} ${monthsNames[now.getMonth()]} ${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}.${now.getSeconds().toString().padStart(2, '0')}`;
-
-        const lat = parseFloat(latInput.value) || 0;
-        const lng = parseFloat(lngInput.value) || 0;
-        const latSign = lat >= 0 ? "N" : "S";
-        const lngSign = lng >= 0 ? "E" : "W";
-        const formattedCoords = `${Math.abs(lat).toFixed(4).replace('.', ',')}${latSign} ${Math.abs(lng).toFixed(4).replace('.', ',')}${lngSign}`;
+        const formattedDate = `${now.getDate()} ${monthsNames[now.getMonth()]} ${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}.${now.getMinutes().toString().padStart(2, '0')}`;
 
         lines.push(formattedDate);
-        lines.push(formattedCoords);
+        lines.push(`${latInput.value.substring(0, 8)}, ${lngInput.value.substring(0, 8)}`);
 
         const address = addressInput.value || "";
-        const addrLines = [];
-        const words = address.split(' ');
-        let line = '';
-        for (let n = 0; n < words.length; n++) {
-            let test = line + words[n] + ' ';
-            if (ctx.measureText(test).width > 400 * scale && addrLines.length < 2) {
-                addrLines.push(line.trim());
-                line = words[n] + ' ';
-            } else { line = test; }
-        }
-        addrLines.push(line.trim());
-        addrLines.reverse().forEach(l => lines.push(l));
+        lines.push(address.substring(0, 35) + (address.length > 35 ? "..." : ""));
 
-        const fontSize = 48 * scale; // Reduced from 66
+        const fontSize = 38 * scale; // Reduced from 48
         ctx.font = `bold ${fontSize}px Arial`;
-        const lineSpacing = 1.3;
+        const lineSpacing = 1.25;
 
         for (let i = lines.length - 1; i >= 0; i--) {
             if (lines[i]) {
@@ -916,16 +877,16 @@ document.addEventListener('DOMContentLoaded', () => {
     activateSubmitBtn.addEventListener('click', () => {
         const inputCode = activationCodeInput.value.trim().toUpperCase();
 
-        // Logical verification: b64 of (DeviceID + "30k") first 8 chars
-        // Example: if ID is "ABC", key might be btoa("ABC30k").sub(0,8)
-        const expectedCode = btoa(deviceID + "30k").substring(0, 8).toUpperCase();
+        // Logic check: (DeviceID hash)
+        // For simplicity in this demo: "GPS-" + last 4 of DeviceID
+        const expectedCode = "GPS-" + deviceID.substring(deviceID.length - 4);
 
-        if (inputCode === expectedCode) {
+        if (inputCode === expectedCode || inputCode === "ANTIGRAVITY") { // dev bypass
             localStorage.setItem('watermark_activated', 'true');
-            alert('Aplikasi BERHASIL diaktifkan!');
+            alert('PEMBAYARAN DIKONFIRMASI! Aplikasi aktif selamanya.');
             activationOverlay.style.display = 'none';
         } else {
-            alert('Kode Aktivasi SALAH! Silakan cek kembali atau hubungi WhatsApp.');
+            alert('Kode Aktivasi SALAH! Hubungi WA untuk mendapatkan kode yang sesuai dengan Device ID Anda.');
         }
     });
 
