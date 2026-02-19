@@ -497,19 +497,48 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY);
         curY += 16 * scale;
 
-        // 2d. Disclaimer
+        // 2d. Disclaimer (Split Color)
         ctx.font = `italic 600 ${7 * scale}px ${fontBase}`;
-        ctx.fillText("✓ Timemark menjamin keaslian waktu", textX, curY);
+        ctx.textAlign = 'left';
+
+        ctx.fillStyle = 'white';
+        ctx.fillText("✓ ", textX, curY);
+        let dOff = ctx.measureText("✓ ").width;
+
+        ctx.fillStyle = '#FFD100'; // Vibrant Yellow
+        ctx.fillText("Time", textX + dOff, curY);
+        dOff += ctx.measureText("Time").width;
+
+        ctx.fillStyle = 'white';
+        ctx.fillText("mark menjamin keaslian waktu", textX + dOff, curY);
         ctx.restore();
 
-        // --- 3. Right Sidebar ---
+        // --- 3. Right Sidebar (Split Color) ---
         ctx.save();
         ctx.translate(canvas.width - padding + 2.5 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `bold ${7 * scale}px ${fontBase}`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // Increased opacity for better visibility
         ctx.textAlign = 'center';
-        ctx.fillText(`© ${serialNumber.value} Timemark Verified`, 0, 0);
+
+        const sPrefix = `© ${serialNumber.value} `;
+        const sSuffix = "mark Verified";
+        const wPrefix = ctx.measureText(sPrefix).width;
+        const wTime = ctx.measureText("Time").width;
+        const totalW = wPrefix + wTime + ctx.measureText(sSuffix).width;
+
+        // Center the whole string
+        let sOff = -totalW / 2;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillText(sPrefix, sOff, 0);
+        sOff += wPrefix;
+
+        ctx.fillStyle = '#FFD100'; // Vibrant Yellow
+        ctx.fillText("Time", sOff, 0);
+        sOff += wTime;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillText(sSuffix, sOff, 0);
         ctx.restore();
 
         // --- 4. Bottom Right Branding (Time in Yellow, mark in White) ---
@@ -527,8 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = 'white';
         ctx.fillText(bTextMark, canvas.width - padding, canvas.height - 22 * scale);
 
-        // Draw "Time" in Yellow to the left of "mark"
-        ctx.fillStyle = '#eab308';
+        // Draw "Time" in Vibrant Yellow to the left of "mark"
+        ctx.fillStyle = '#FFD100';
         ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 22 * scale);
 
         ctx.fillStyle = 'white';
