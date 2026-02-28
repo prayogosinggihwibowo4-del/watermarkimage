@@ -535,7 +535,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 3. Right Sidebar ---
         ctx.save();
-        ctx.translate(canvas.width - padding + 4 * scale, canvas.height * 0.25);
+        // Move to 45% from top to avoid any top-right overlap with Kemensos logo
+        ctx.translate(canvas.width - padding + 4 * scale, canvas.height * 0.45);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `bold ${7 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
@@ -570,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
 
-        ctx.font = `bold ${15 * scale}px ${fontBase}`;
+        ctx.font = `bold ${7.5 * scale}px ${fontBase}`;
         const mText = "mark";
         const tText = "Time";
         const mWidth = ctx.measureText(mText).width;
