@@ -303,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.drawImage(currentImage, 0, 0);
 
         const theme = themeSelect.value;
+        console.log("Rendering watermark with theme:", theme);
         if (theme === 'theme1') {
             renderTheme1();
         } else if (theme === 'theme2') {
@@ -393,7 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 lineIdx++;
             } else { line = test; }
         }
-        ctx.fillText(ln = (line.length > 20 ? line.substring(0, 20) + "..." : line).trim(), textX, curY);
+        let finalLine = (line.length > 20 ? line.substring(0, 20) + "..." : line).trim();
+        ctx.fillText(finalLine, textX, curY);
 
         // Lat/Lng
         ctx.font = `bold ${addrFS * 0.9}px Arial`;
@@ -402,6 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTheme2() {
+        console.log("Rendering Theme 2...");
         const baseScale = canvas.width / 1000;
         const scale = baseScale * 1.2;
         const padding = 12 * scale;
@@ -430,7 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let curY = canvas.height - 110 * scale;
         const startX = padding;
 
-        // Badge [Label ✓] Time
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value || "10:28";
 
@@ -483,80 +485,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2a. Day, Date
         ctx.font = `bold ${10 * scale}px ${fontBase}`;
-        ctx.fillText(dateInput.value, textX, curY + 10 * scale);
+        ctx.fillText(dateInput.value || "", textX, curY + 10 * scale);
         curY += 20 * scale;
 
         // 2b. Address (Wrapped)
         ctx.font = `bold ${9 * scale}px ${fontBase}`;
-        const addr = addressInput.value || "Silakan pilih lokasi...";
-        const wrds = addr.split(' ');
-        let ln = '';
-        let lnCt = 0;
-        const maxW = 300 * baseScale;
-        for (let n = 0; n < wrds.length; n++) {
-            let tst = ln + wrds[n] + ' ';
-            if (ctx.measureText(tst).width > maxW && lnCt < 2) {
-                ctx.fillText(ln.trim(), textX, curY);
-                ln = wrds[n] + ' ';
+        const addressText = addressInput.value || "Silakan pilih lokasi...";
+        const wordsArr = addressText.split(' ');
+        let currentLine = '';
+        let lineCount = 0;
+        const maxWidth = 300 * baseScale;
+
+        for (let i = 0; i < wordsArr.length; i++) {
+            let testLine = currentLine + wordsArr[i] + ' ';
+            if (ctx.measureText(testLine).width > maxWidth && lineCount < 2) {
+                ctx.fillText(currentLine.trim(), textX, curY);
+                currentLine = wordsArr[i] + ' ';
                 curY += 12 * scale;
-                lnCt++;
-            } else { ln = tst; }
+                lineCount++;
+            } else {
+                currentLine = testLine;
+            }
         }
-        ctx.fillText(ln.trim(), textX, curY);
+        ctx.fillText(currentLine.trim(), textX, curY);
         curY += 16 * scale;
 
         // 2c. Lat/Lng
         ctx.font = `bold ${9 * scale}px ${fontBase}`;
-        ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY);
+        ctx.fillText(`${latInput.value || "0"}°S, ${lngInput.value || "0"}°E`, textX, curY);
         curY += 20 * scale;
 
         // 2d. Disclaimer
         ctx.font = `italic 600 ${8 * scale}px ${fontBase}`;
         const dCheck = "✓ ";
-        const dTime = "Time";
-        const dSuffix = "mark menjamin keaslian waktu";
+        const dTimeLabel = "Time";
+        const dSuffixLine = "mark menjamin keaslian waktu";
 
         ctx.fillStyle = 'white';
         ctx.fillText(dCheck, textX, curY);
-        let dOff = ctx.measureText(dCheck).width;
+        let offsetD = ctx.measureText(dCheck).width;
 
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(dTime, textX + dOff, curY);
-        dOff += ctx.measureText(dTime).width;
+        ctx.fillText(dTimeLabel, textX + offsetD, curY);
+        offsetD += ctx.measureText(dTimeLabel).width;
 
         ctx.fillStyle = 'white';
-        ctx.fillText(dSuffix, textX + dOff, curY);
+        ctx.fillText(dSuffixLine, textX + offsetD, curY);
         ctx.restore();
 
-        // --- 3. Right Sidebar (Relocated to Upper Right) ---
+        // --- 3. Right Sidebar ---
         ctx.save();
-        // Move to 25% from top to avoid any bottom-right overlap
         ctx.translate(canvas.width - padding + 4 * scale, canvas.height * 0.25);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `bold ${7 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
 
-        const sPrefix = `© ${serialNumber.value} `;
-        const sTime = "Time";
-        const sSuffix = "mark Verified";
+        const sFull = `© ${serialNumber.value || "N/A"} Timemark Verified`;
+        const wordsS = sFull.split(' ');
+        let offS = 0;
 
-        const wPrefix = ctx.measureText(sPrefix).width;
-        const wTime = ctx.measureText(sTime).width;
-        const wSuffix = ctx.measureText(sSuffix).width;
-        const totalW = wPrefix + wTime + wSuffix;
+        ctx.textAlign = 'left';
+        const totalSW = ctx.measureText(sFull).width;
+        let drawPosX = -totalSW / 2;
 
-        let sOff = -totalW / 2;
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.fillText(sPrefix, sOff + (wPrefix / 2), 0);
-        sOff += wPrefix;
-
-        ctx.fillStyle = '#FFD100';
-        ctx.fillText(sTime, sOff + (wTime / 2), 0);
-        sOff += wTime;
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.fillText(sSuffix, sOff + (wSuffix / 2), 0);
+        wordsS.forEach(w => {
+            if (w === "Timemark") {
+                ctx.fillStyle = '#FFD100';
+                ctx.fillText("Time", drawPosX, 0);
+                drawPosX += ctx.measureText("Time").width;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fillText("mark ", drawPosX, 0);
+                drawPosX += ctx.measureText("mark ").width;
+            } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fillText(w + " ", drawPosX, 0);
+                drawPosX += ctx.measureText(w + " ").width;
+            }
+        });
         ctx.restore();
 
         // --- 4. Bottom Right Branding ---
@@ -565,22 +570,21 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
 
-        const brTime = "Time";
-        const brMark = "mark";
         ctx.font = `bold ${15 * scale}px ${fontBase}`;
-
-        const markWidth = ctx.measureText(brMark).width;
+        const mText = "mark";
+        const tText = "Time";
+        const mWidth = ctx.measureText(mText).width;
 
         ctx.fillStyle = 'white';
-        ctx.fillText(brMark, canvas.width - padding, canvas.height - 35 * scale);
-
+        ctx.fillText(mText, canvas.width - padding, canvas.height - 35 * scale);
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 35 * scale);
+        ctx.fillText(tText, canvas.width - padding - mWidth, canvas.height - 35 * scale);
 
         ctx.fillStyle = 'white';
         ctx.font = `bold ${9 * scale}px ${fontBase}`;
         ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 22 * scale);
         ctx.restore();
+        console.log("Theme 2 rendered.");
     }
 
 
