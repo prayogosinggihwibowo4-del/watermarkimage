@@ -387,8 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTheme2() {
-        const scale = canvas.width / 1000;
+        const scale = (canvas.width / 1000) * 2;
         const padding = 7 * scale;
+
         const fontBase = "Arial Narrow, Arial, sans-serif";
 
         // Discrete width benchmark (~11.5% of width)
