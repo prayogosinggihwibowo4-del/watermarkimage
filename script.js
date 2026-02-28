@@ -248,16 +248,31 @@ document.addEventListener('DOMContentLoaded', () => {
     imageUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            generateRandomSerial(); // Generate new serial for new photo
+            generateRandomSerial();
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
-                    currentImage = img;
-                    emptyState.style.display = 'none';
-                    canvas.style.display = 'block';
-                    downloadBtn.disabled = false;
-                    renderWatermark();
+                    // Normalize image size: Standardize to 2000px width
+                    const targetWidth = 2000;
+                    const scaleFactor = targetWidth / img.width;
+                    const targetHeight = img.height * scaleFactor;
+
+                    const resizeCanvas = document.createElement('canvas');
+                    resizeCanvas.width = targetWidth;
+                    resizeCanvas.height = targetHeight;
+                    const rCtx = resizeCanvas.getContext('2d');
+                    rCtx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                    const resizedImg = new Image();
+                    resizedImg.onload = () => {
+                        currentImage = resizedImg;
+                        emptyState.style.display = 'none';
+                        canvas.style.display = 'block';
+                        downloadBtn.disabled = false;
+                        renderWatermark();
+                    };
+                    resizedImg.src = resizeCanvas.toDataURL('image/jpeg', 0.95);
                 };
                 img.src = event.target.result;
             };
@@ -515,7 +530,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 3. Right Sidebar ---
         ctx.save();
-        ctx.translate(canvas.width - padding + 5 * scale, canvas.height / 2);
+        // Shift sidebar higher up (40% from top) to clear room for bottom branding
+        ctx.translate(canvas.width - padding + 5 * scale, canvas.height * 0.40);
         ctx.rotate(-Math.PI / 2);
         ctx.font = `bold ${8 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
@@ -551,22 +567,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const brTime = "Time";
         const brMark = "mark";
-        ctx.font = `bold ${16 * scale}px ${fontBase}`;
+        ctx.font = `bold ${18 * scale}px ${fontBase}`; // Slightly larger as requested
 
         const markWidth = ctx.measureText(brMark).width;
-        const timeWidth = ctx.measureText(brTime).width;
 
         ctx.fillStyle = 'white';
-        ctx.fillText(brMark, canvas.width - padding, canvas.height - 30 * scale);
+        // Positioned higher (45px offset) to ensure "100% akurat" fits below
+        ctx.fillText(brMark, canvas.width - padding, canvas.height - 45 * scale);
 
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 30 * scale);
+        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 45 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${9 * scale}px ${fontBase}`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 18 * scale);
+        ctx.font = `bold ${10 * scale}px ${fontBase}`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 30 * scale);
         ctx.restore();
     }
+
 
 
     function renderThemePrecision() {
