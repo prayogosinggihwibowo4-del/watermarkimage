@@ -387,17 +387,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTheme2() {
-        const scale = (canvas.width / 1000) * 2;
-        const padding = 7 * scale;
-
-        const fontBase = "Arial Narrow, Arial, sans-serif";
-
-        // Discrete width benchmark (~11.5% of width)
-        const targetW = 115 * scale;
+        const baseScale = canvas.width / 1000;
+        const scale = baseScale * 2;
+        const padding = 10 * scale;
+        const fontBase = "Arial, sans-serif";
 
         // --- 1. Top Right Branding (Kemensos) ---
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0 && institutionLogo.src !== "") {
-            const lW = 31 * scale;
+            const lW = 40 * scale;
             const lH = lW * (institutionLogo.height / institutionLogo.width);
             const bundleCenterX = canvas.width - padding - (lW / 2);
             const lX = bundleCenterX - (lW / 2);
@@ -407,52 +404,60 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${2.75 * scale}px ${fontBase}`;
+            ctx.font = `bold ${7 * scale}px ${fontBase}`;
             ctx.textAlign = 'center';
-            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 10 * scale);
-            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 18 * scale);
+            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 12 * scale);
+            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 22 * scale);
             ctx.restore();
         }
 
         // --- 2. Bottom Left Info Block ---
-        let curY = canvas.height - 100 * scale;
+        let curY = canvas.height - 120 * scale;
         const startX = padding;
 
         // Badge [Label ✓] Time
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value || "10:28";
-        ctx.font = `bold ${5.75 * scale}px ${fontBase}`;
+
+        ctx.font = `bold ${12 * scale}px ${fontBase}`;
         const labW = ctx.measureText(bLabel).width;
-        const timW = ctx.measureText(` ${bTime}`).width;
-        const bPadX = 6 * scale;
-        const bW = labW + timW + (bPadX * 2);
-        const bH = 22 * scale;
+        const spaceW = ctx.measureText(" ").width;
+        const timW = ctx.measureText(bTime).width;
+
+        const bPadX = 8 * scale;
+        const bW = labW + spaceW + timW + (bPadX * 2);
+        const bH = 26 * scale;
 
         ctx.save();
         ctx.fillStyle = 'white';
         roundRect(ctx, startX, curY, bW, bH, 5 * scale);
         ctx.fill();
 
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        const textCenterY = curY + (bH / 2);
+
         ctx.fillStyle = '#FFD100'; // VIBRANT YELLOW
-        ctx.fillText(bLabel, startX + bPadX, curY + 15 * scale);
+        ctx.fillText(bLabel, startX + bPadX, textCenterY);
+
         ctx.fillStyle = '#1e293b'; // DARK NAVY
-        ctx.fillText(bTime, startX + bPadX + labW, curY + 15 * scale);
+        ctx.fillText(bTime, startX + bPadX + labW + spaceW, textCenterY);
         ctx.restore();
 
-        curY += 34 * scale;
+        curY += bH + 10 * scale;
 
         // --- Vertical Line Indicator ---
         ctx.save();
-        ctx.lineWidth = 1.1 * scale;
+        ctx.lineWidth = 1.5 * scale;
         ctx.strokeStyle = '#FFD100';
         ctx.beginPath();
-        ctx.moveTo(startX, curY - 4 * scale);
-        ctx.lineTo(startX, curY + 50 * scale);
+        ctx.moveTo(startX, curY);
+        ctx.lineTo(startX, curY + 65 * scale);
         ctx.stroke();
         ctx.restore();
 
-        // --- Shadowed Text Block ---
-        const textX = startX + 9 * scale;
+        // --- Info Text Block ---
+        const textX = startX + 12 * scale;
         ctx.save();
         ctx.fillStyle = 'white';
         ctx.shadowBlur = 4 * scale;
@@ -462,102 +467,107 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = 'left';
 
         // 2a. Day, Date
-        ctx.font = `bold ${4.75 * scale}px ${fontBase}`;
-        ctx.fillText(dateInput.value, textX, curY);
-        curY += 14 * scale;
+        ctx.font = `bold ${10 * scale}px ${fontBase}`;
+        ctx.fillText(dateInput.value, textX, curY + 10 * scale);
+        curY += 22 * scale;
 
         // 2b. Address (Wrapped)
-        ctx.font = `bold ${4.25 * scale}px ${fontBase}`;
+        ctx.font = `bold ${9 * scale}px ${fontBase}`;
         const addr = addressInput.value || "Silakan pilih lokasi...";
         const wrds = addr.split(' ');
         let ln = '';
         let lnCt = 0;
-        const maxW = targetW - 14 * scale;
+        const maxW = 350 * baseScale; // Adjusted for responsive width
         for (let n = 0; n < wrds.length; n++) {
             let tst = ln + wrds[n] + ' ';
             if (ctx.measureText(tst).width > maxW && lnCt < 2) {
                 ctx.fillText(ln.trim(), textX, curY);
                 ln = wrds[n] + ' ';
-                curY += 11 * scale;
+                curY += 13 * scale;
                 lnCt++;
             } else { ln = tst; }
         }
         ctx.fillText(ln.trim(), textX, curY);
-        curY += 14 * scale;
+        curY += 18 * scale;
 
-        // 2c. Lat/Lng (White)
-        ctx.fillStyle = 'white';
+        // 2c. Lat/Lng
+        ctx.font = `bold ${9 * scale}px ${fontBase}`;
         ctx.fillText(`${latInput.value}°S, ${lngInput.value}°E`, textX, curY);
-        curY += 17 * scale;
+        curY += 20 * scale;
 
-        // 2d. Disclaimer (Split Color)
-        ctx.font = `italic 600 ${3.75 * scale}px ${fontBase}`;
-        ctx.textAlign = 'left';
-
-        ctx.fillStyle = 'white';
-        ctx.fillText("✓ ", textX, curY);
-        let dOff = ctx.measureText("✓ ").width;
-
-        ctx.fillStyle = '#FFD100'; // Vibrant Yellow
-        ctx.fillText("Time", textX + dOff, curY);
-        dOff += ctx.measureText("Time").width;
+        // 2d. Disclaimer
+        ctx.font = `italic 600 ${8 * scale}px ${fontBase}`;
+        const dCheck = "✓ ";
+        const dTime = "Time";
+        const dSuffix = "mark menjamin keaslian waktu";
 
         ctx.fillStyle = 'white';
-        ctx.fillText("mark menjamin keaslian waktu", textX + dOff, curY);
+        ctx.fillText(dCheck, textX, curY);
+        let dOff = ctx.measureText(dCheck).width;
+
+        ctx.fillStyle = '#FFD100';
+        ctx.fillText(dTime, textX + dOff, curY);
+        dOff += ctx.measureText(dTime).width;
+
+        ctx.fillStyle = 'white';
+        ctx.fillText(dSuffix, textX + dOff, curY);
         ctx.restore();
 
-        // --- 3. Right Sidebar (Split Color) ---
+        // --- 3. Right Sidebar ---
         ctx.save();
-        ctx.translate(canvas.width - padding + 3 * scale, canvas.height / 2);
+        ctx.translate(canvas.width - padding + 5 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `bold ${3.75 * scale}px ${fontBase}`;
+        ctx.font = `bold ${8 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
 
         const sPrefix = `© ${serialNumber.value} `;
+        const sTime = "Time";
         const sSuffix = "mark Verified";
-        const wPrefix = ctx.measureText(sPrefix).width;
-        const wTime = ctx.measureText("Time").width;
-        const totalW = wPrefix + wTime + ctx.measureText(sSuffix).width;
 
-        // Center the whole string
+        const wPrefix = ctx.measureText(sPrefix).width;
+        const wTime = ctx.measureText(sTime).width;
+        const wSuffix = ctx.measureText(sSuffix).width;
+        const totalW = wPrefix + wTime + wSuffix;
+
         let sOff = -totalW / 2;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.fillText(sPrefix, sOff, 0);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(sPrefix, sOff + (wPrefix / 2), 0);
         sOff += wPrefix;
 
-        ctx.fillStyle = '#FFD100'; // Vibrant Yellow
-        ctx.fillText("Time", sOff, 0);
+        ctx.fillStyle = '#FFD100';
+        ctx.fillText(sTime, sOff + (wTime / 2), 0);
         sOff += wTime;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.fillText(sSuffix, sOff, 0);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(sSuffix, sOff + (wSuffix / 2), 0);
         ctx.restore();
 
-        // --- 4. Bottom Right Branding (Time in Yellow, mark in White) ---
+        // --- 4. Bottom Right Branding ---
         ctx.save();
         ctx.textAlign = 'right';
         ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
-        ctx.font = `bold ${6.5 * scale}px ${fontBase}`;
 
-        const bTextMark = "mark";
-        const bTextTime = "Time";
-        const markW = ctx.measureText(bTextMark).width;
+        const brTime = "Time";
+        const brMark = "mark";
+        ctx.font = `bold ${16 * scale}px ${fontBase}`;
 
-        // Draw "mark" in White
+        const markWidth = ctx.measureText(brMark).width;
+        const timeWidth = ctx.measureText(brTime).width;
+
         ctx.fillStyle = 'white';
-        ctx.fillText(bTextMark, canvas.width - padding, canvas.height - 24 * scale);
+        ctx.fillText(brMark, canvas.width - padding, canvas.height - 30 * scale);
 
-        // Draw "Time" in Vibrant Yellow to the left of "mark"
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 24 * scale);
+        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 30 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${3.75 * scale}px ${fontBase}`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 15 * scale);
+        ctx.font = `bold ${9 * scale}px ${fontBase}`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 18 * scale);
         ctx.restore();
     }
+
 
     function renderThemePrecision() {
         const scale = canvas.width / 1000;
