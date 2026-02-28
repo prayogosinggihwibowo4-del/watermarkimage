@@ -494,10 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let lnCt = 0;
         const maxW = 300 * baseScale;
         for (let n = 0; n < wrds.length; n++) {
-            let tst = ln + words[n] + ' ';
+            let tst = ln + wrds[n] + ' ';
             if (ctx.measureText(tst).width > maxW && lnCt < 2) {
                 ctx.fillText(ln.trim(), textX, curY);
-                ln = words[n] + ' ';
+                ln = wrds[n] + ' ';
                 curY += 12 * scale;
                 lnCt++;
             } else { ln = tst; }
