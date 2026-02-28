@@ -403,13 +403,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTheme2() {
         const baseScale = canvas.width / 1000;
-        const scale = baseScale * 2;
-        const padding = 10 * scale;
+        const scale = baseScale * 1.2;
+        const padding = 12 * scale;
         const fontBase = "Arial, sans-serif";
 
         // --- 1. Top Right Branding (Kemensos) ---
         if (institutionLogo.complete && institutionLogo.naturalHeight !== 0 && institutionLogo.src !== "") {
-            const lW = 40 * scale;
+            const lW = 32 * scale;
             const lH = lW * (institutionLogo.height / institutionLogo.width);
             const bundleCenterX = canvas.width - padding - (lW / 2);
             const lX = bundleCenterX - (lW / 2);
@@ -419,15 +419,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${7 * scale}px ${fontBase}`;
+            ctx.font = `bold ${6 * scale}px ${fontBase}`;
             ctx.textAlign = 'center';
-            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 12 * scale);
-            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 22 * scale);
+            ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 10 * scale);
+            ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 18 * scale);
             ctx.restore();
         }
 
         // --- 2. Bottom Left Info Block ---
-        let curY = canvas.height - 120 * scale;
+        let curY = canvas.height - 110 * scale;
         const startX = padding;
 
         // Badge [Label ✓] Time
@@ -459,15 +459,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(bTime, startX + bPadX + labW + spaceW, textCenterY);
         ctx.restore();
 
-        curY += bH + 10 * scale;
+        curY += bH + 8 * scale;
 
         // --- Vertical Line Indicator ---
         ctx.save();
-        ctx.lineWidth = 1.5 * scale;
+        ctx.lineWidth = 1.2 * scale;
         ctx.strokeStyle = '#FFD100';
         ctx.beginPath();
         ctx.moveTo(startX, curY);
-        ctx.lineTo(startX, curY + 65 * scale);
+        ctx.lineTo(startX, curY + 60 * scale);
         ctx.stroke();
         ctx.restore();
 
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2a. Day, Date
         ctx.font = `bold ${10 * scale}px ${fontBase}`;
         ctx.fillText(dateInput.value, textX, curY + 10 * scale);
-        curY += 22 * scale;
+        curY += 20 * scale;
 
         // 2b. Address (Wrapped)
         ctx.font = `bold ${9 * scale}px ${fontBase}`;
@@ -492,18 +492,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrds = addr.split(' ');
         let ln = '';
         let lnCt = 0;
-        const maxW = 350 * baseScale; // Adjusted for responsive width
+        const maxW = 300 * baseScale;
         for (let n = 0; n < wrds.length; n++) {
-            let tst = ln + wrds[n] + ' ';
+            let tst = ln + words[n] + ' ';
             if (ctx.measureText(tst).width > maxW && lnCt < 2) {
                 ctx.fillText(ln.trim(), textX, curY);
-                ln = wrds[n] + ' ';
-                curY += 13 * scale;
+                ln = words[n] + ' ';
+                curY += 12 * scale;
                 lnCt++;
             } else { ln = tst; }
         }
         ctx.fillText(ln.trim(), textX, curY);
-        curY += 18 * scale;
+        curY += 16 * scale;
 
         // 2c. Lat/Lng
         ctx.font = `bold ${9 * scale}px ${fontBase}`;
@@ -528,12 +528,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(dSuffix, textX + dOff, curY);
         ctx.restore();
 
-        // --- 3. Right Sidebar ---
+        // --- 3. Right Sidebar (Relocated to Upper Right) ---
         ctx.save();
-        // Shift sidebar higher up (40% from top) to clear room for bottom branding
-        ctx.translate(canvas.width - padding + 5 * scale, canvas.height * 0.40);
+        // Move to 25% from top to avoid any bottom-right overlap
+        ctx.translate(canvas.width - padding + 4 * scale, canvas.height * 0.25);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `bold ${8 * scale}px ${fontBase}`;
+        ctx.font = `bold ${7 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
 
         const sPrefix = `© ${serialNumber.value} `;
@@ -567,22 +567,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const brTime = "Time";
         const brMark = "mark";
-        ctx.font = `bold ${18 * scale}px ${fontBase}`; // Slightly larger as requested
+        ctx.font = `bold ${15 * scale}px ${fontBase}`;
 
         const markWidth = ctx.measureText(brMark).width;
 
         ctx.fillStyle = 'white';
-        // Positioned higher (45px offset) to ensure "100% akurat" fits below
-        ctx.fillText(brMark, canvas.width - padding, canvas.height - 45 * scale);
+        ctx.fillText(brMark, canvas.width - padding, canvas.height - 35 * scale);
 
         ctx.fillStyle = '#FFD100';
-        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 45 * scale);
+        ctx.fillText(brTime, canvas.width - padding - markWidth, canvas.height - 35 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${10 * scale}px ${fontBase}`;
-        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 30 * scale);
+        ctx.font = `bold ${9 * scale}px ${fontBase}`;
+        ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 22 * scale);
         ctx.restore();
     }
+
 
 
 
