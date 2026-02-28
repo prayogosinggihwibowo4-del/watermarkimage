@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.drawImage(institutionLogo, lX, lY, lW, lH);
 
             ctx.fillStyle = 'black';
-            ctx.font = `bold ${5.5 * scale}px ${fontBase}`;
+            ctx.font = `bold ${2.75 * scale}px ${fontBase}`;
             ctx.textAlign = 'center';
             ctx.fillText("KEMENTERIAN SOSIAL", bundleCenterX, lY + lH + 10 * scale);
             ctx.fillText("REPUBLIK INDONESIA", bundleCenterX, lY + lH + 18 * scale);
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Badge [Label ✓] Time
         const bLabel = `[${locationTitle.value || "P2K2 ✓"}]`;
         const bTime = timeInput.value || "10:28";
-        ctx.font = `bold ${11.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${5.75 * scale}px ${fontBase}`;
         const labW = ctx.measureText(bLabel).width;
         const timW = ctx.measureText(` ${bTime}`).width;
         const bPadX = 6 * scale;
@@ -462,12 +462,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = 'left';
 
         // 2a. Day, Date
-        ctx.font = `bold ${9.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${4.75 * scale}px ${fontBase}`;
         ctx.fillText(dateInput.value, textX, curY);
         curY += 14 * scale;
 
         // 2b. Address (Wrapped)
-        ctx.font = `bold ${8.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${4.25 * scale}px ${fontBase}`;
         const addr = addressInput.value || "Silakan pilih lokasi...";
         const wrds = addr.split(' ');
         let ln = '';
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
         curY += 17 * scale;
 
         // 2d. Disclaimer (Split Color)
-        ctx.font = `italic 600 ${7.5 * scale}px ${fontBase}`;
+        ctx.font = `italic 600 ${3.75 * scale}px ${fontBase}`;
         ctx.textAlign = 'left';
 
         ctx.fillStyle = 'white';
@@ -510,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         ctx.translate(canvas.width - padding + 3 * scale, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.font = `bold ${7.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${3.75 * scale}px ${fontBase}`;
         ctx.textAlign = 'center';
 
         const sPrefix = `© ${serialNumber.value} `;
@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = 'right';
         ctx.shadowBlur = 4 * scale;
         ctx.shadowColor = 'black';
-        ctx.font = `bold ${13 * scale}px ${fontBase}`;
+        ctx.font = `bold ${6.5 * scale}px ${fontBase}`;
 
         const bTextMark = "mark";
         const bTextTime = "Time";
@@ -554,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillText(bTextTime, canvas.width - padding - markW, canvas.height - 24 * scale);
 
         ctx.fillStyle = 'white';
-        ctx.font = `bold ${7.5 * scale}px ${fontBase}`;
+        ctx.font = `bold ${3.75 * scale}px ${fontBase}`;
         ctx.fillText("Foto 100% akurat", canvas.width - padding, canvas.height - 15 * scale);
         ctx.restore();
     }
